@@ -63,3 +63,18 @@ Este proyecto considera el testing como la primera barrera de defensa contra la 
     *   Es inaceptable eliminar o editar tests existentes sin una justificación técnica aprobada por el humano (HITL).
     *   Los nombres de los tests deben seguir la convención del proyecto en español (ej. `debeRetornarErrorCuandoElProyectoNoExiste`).
 *   **Validación:** Antes de proponer un cambio como finalizado, el agente debe ejecutar `mvn test` y verificar que el 100% de la suite de pruebas pase con éxito.
+
+## 7. Flujo de Git y Gestión de Ramas
+
+Este proyecto sigue una política estricta de "main protegida". El agente debe actuar como un colaborador que nunca compromete la estabilidad de la rama de producción.
+
+*   **Prohibición de Push Directo:** Está estrictamente prohibido realizar cambios o `git push` directamente a la rama `main`.
+*   **Creación de Ramas:** Toda nueva funcionalidad, corrección o refactorización debe realizarse en una rama secundaria independiente (feature branch).
+*   **Commits Atómicos:** 
+    *   Se deben realizar commits después de cada cambio lógico o tarea atómica completada.
+    *   Cada commit debe dejar el código en un estado funcional y servir como un "punto de guardado" para posibles reversiones.
+*   **Estándar de Mensajes:** Es obligatorio usar *Conventional Commits* (ej. `feat:`, `fix:`, `docs:`, `test:`) para permitir la automatización de versiones y notas de lanzamiento mediante *Release Please*.
+*   **Uso de Pull Requests (PR):**
+    *   La integración en `main` solo se permite mediante un Pull Request formal.
+    *   El agente debe esperar a que los checks automáticos (Lint, Tests, Seguridad) pasen satisfactoriamente antes de solicitar el merge.
+*   **Estrategia Multi-Agente:** Si se lanzan varios agentes en paralelo, se deben utilizar **Git Worktrees** para aislar el trabajo en carpetas físicas distintas vinculadas a ramas diferentes, evitando colisiones de archivos.
