@@ -78,3 +78,20 @@ Este proyecto sigue una política estricta de "main protegida". El agente debe a
     *   La integración en `main` solo se permite mediante un Pull Request formal.
     *   El agente debe esperar a que los checks automáticos (Lint, Tests, Seguridad) pasen satisfactoriamente antes de solicitar el merge.
 *   **Estrategia Multi-Agente:** Si se lanzan varios agentes en paralelo, se deben utilizar **Git Worktrees** para aislar el trabajo en carpetas físicas distintas vinculadas a ramas diferentes, evitando colisiones de archivos.
+
+## 8. Documentación del Proyecto
+
+La documentación técnica del proyecto está modularizada en la carpeta `docs/` en la raíz del workspace. Todo agente o desarrollador debe consultarla y **mantenerla actualizada** cuando se modifique código que afecte lo documentado.
+
+*   **Índice de Documentos:**
+    *   `docs/architecture.md` — Diagrama de capas, paquetes y relaciones entre entidades.
+    *   `docs/database-schema.md` — Modelo ER, campos por entidad y enumeraciones.
+    *   `docs/api-reference.md` — Endpoints REST, DTOs y códigos HTTP.
+    *   `docs/setup-guide.md` — Instalación, configuración de `.env` y troubleshooting.
+    *   `docs/error-handling.md` — `TableroExcepcion`, `ManejadorGlobalExcepciones` y `ErrorDtoSalida`.
+    *   `docs/contributing.md` — Convenciones de código, flujo Git y reglas de testing.
+*   **Reglas para el Agente:**
+    *   Si se agrega un nuevo endpoint, actualizar `docs/api-reference.md`.
+    *   Si se agrega o modifica una entidad/enum, actualizar `docs/database-schema.md`.
+    *   Si se modifica la arquitectura de paquetes, actualizar `docs/architecture.md`.
+    *   Nunca eliminar documentación existente sin justificación aprobada por el humano (HITL).
