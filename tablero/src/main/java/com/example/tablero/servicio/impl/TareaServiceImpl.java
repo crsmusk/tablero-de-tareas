@@ -6,11 +6,14 @@ import com.example.tablero.entidades.dtos.salida.TareaDtoSalida;
 import com.example.tablero.entidades.entidades.ProyectoEntity;
 import com.example.tablero.entidades.entidades.TareaEntity;
 import com.example.tablero.entidades.entidades.enums.EstadosTarea;
+import com.example.tablero.excepciones.excepcion.TableroExcepcion;
 import com.example.tablero.mapper.TareaMapper;
 import com.example.tablero.repositorio.ProyectoRepositorio;
 import com.example.tablero.repositorio.TareaRepositorio;
 import com.example.tablero.servicio.interfaces.TareaI;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -35,7 +38,8 @@ public class TareaServiceImpl implements TareaI {
     public void guardarTarea(TareaDtoEntrada tareaDto) {
         if (tareaDto.getIdProyectoAsociado() == null
                 || !repositorioProyecto.existsById(UUID.fromString(tareaDto.getIdProyectoAsociado()))) {
-            throw new RuntimeException("no se encontro el proyecto con el id " + tareaDto.getIdProyectoAsociado());
+            throw new TableroExcepcion("No se encontró el proyecto con el id " + tareaDto.getIdProyectoAsociado(),
+                    HttpStatus.NOT_FOUND);
         }
         ProyectoEntity proyecto = new ProyectoEntity();
         proyecto.setId(UUID.fromString(tareaDto.getIdProyectoAsociado()));
@@ -59,15 +63,22 @@ public class TareaServiceImpl implements TareaI {
     @Override
     public TareaDtoSalida buscarTareaPorId(UUID idTarea) {
         return mapper.tareaM(
-                repositorio.findById(idTarea).orElseThrow(() -> new RuntimeException("no se encontro la tarea")));
+                repositorio.findById(idTarea)
+                        .orElseThrow(() -> new TableroExcepcion("No se encontró la tarea con el id " + idTarea,
+                                HttpStatus.NOT_FOUND)));
     }
 
+    @Transactional
     @Override
     public void cambiarOrden(UUID tareaOrdenAnterior, UUID tareaOrdenActual) {
         int ordenOld = 0;
-        TareaEntity ordenViejo = repositorio.findById(tareaOrdenAnterior).orElseThrow();
+        TareaEntity ordenViejo = repositorio.findById(tareaOrdenAnterior)
+                .orElseThrow(() -> new TableroExcepcion("No se encontró la tarea con el id " + tareaOrdenAnterior,
+                        HttpStatus.NOT_FOUND));
         ordenOld = ordenViejo.getPosicion();
-        TareaEntity ordenActual = repositorio.findById(tareaOrdenActual).orElseThrow();
+        TareaEntity ordenActual = repositorio.findById(tareaOrdenActual)
+                .orElseThrow(() -> new TableroExcepcion("No se encontró la tarea con el id " + tareaOrdenActual,
+                        HttpStatus.NOT_FOUND));
         ordenViejo.setPosicion(ordenActual.getPosicion());
         ordenActual.setPosicion(ordenOld);
         repositorio.save(ordenActual);
@@ -86,13 +97,17 @@ public class TareaServiceImpl implements TareaI {
 
     @Override
     public void eliminarTarea(UUID idTarea) {
-        repositorio.deleteById(idTarea);
+        TareaEntity tarea = repositorio.findById(idTarea)
+                .orElseThrow(() -> new TableroExcepcion("No se encontró la tarea con el id " + idTarea,
+                        HttpStatus.NOT_FOUND));
+        repositorio.delete(tarea);
     }
 
     @Override
     public void actualizarTarea(UUID idTarea, TareaDtoEntrada tareaDto) {
         TareaEntity tarea = repositorio.findById(idTarea)
-                .orElseThrow(() -> new RuntimeException("no se encontro la tarea con el id " + idTarea));
+                .orElseThrow(() -> new TableroExcepcion("No se encontró la tarea con el id " + idTarea,
+                        HttpStatus.NOT_FOUND));
 
         if (tareaDto.getDescripcion() != null && !tareaDto.getDescripcion().isEmpty()) {
             tarea.setDescripcion(tareaDto.getDescripcion());
@@ -102,7 +117,9 @@ public class TareaServiceImpl implements TareaI {
             try {
                 tarea.setEstado(EstadosTarea.valueOf(tareaDto.getEstado().toUpperCase()));
             } catch (IllegalArgumentException e) {
-                // Ignore invalid state
+                throw new TableroExcepcion("Estado inválido: " + tareaDto.getEstado()
+                        + ". Valores permitidos: PENDIENTE, EN_PROGRESO, EN_REVISION, COMPLETADO",
+                        HttpStatus.BAD_REQUEST);
             }
         }
 
