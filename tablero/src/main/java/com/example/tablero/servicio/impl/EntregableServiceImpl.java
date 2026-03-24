@@ -9,8 +9,11 @@ import com.example.tablero.mapper.EntregableMapper;
 import com.example.tablero.repositorio.EntregablesRepositorio;
 import com.example.tablero.repositorio.TareaRepositorio;
 import com.example.tablero.servicio.interfaces.EntregableI;
+import com.example.tablero.excepciones.excepcion.TableroExcepcion;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -19,6 +22,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 public class EntregableServiceImpl implements EntregableI {
 
@@ -35,7 +39,8 @@ public class EntregableServiceImpl implements EntregableI {
         try {
             Files.createDirectories(rootLocation);
         } catch (IOException e) {
-            throw new RuntimeException("No se pudo inicializar la carpeta de almacenamiento", e);
+            throw new TableroExcepcion("No se pudo inicializar la carpeta de almacenamiento",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -43,52 +48,70 @@ public class EntregableServiceImpl implements EntregableI {
     public EntregablesEntity guardarEntregable(EntregableDtoEntrada entregableDto) {
         EntregablesEntity entity = new EntregablesEntity();
 
+        // Validación del tipo — aislada de todo lo demás
+        TipoEntregable tipo;
         try {
-            TipoEntregable tipo = TipoEntregable.valueOf(entregableDto.getTipoEntregable().toUpperCase());
-            entity.setTipoEntregable(tipo);
+            tipo = TipoEntregable.valueOf(entregableDto.getTipoEntregable().toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new TableroExcepcion("Tipo de entregable inválido: " + entregableDto.getTipoEntregable(),
+                    HttpStatus.BAD_REQUEST);
+        }
 
-            if (tipo == TipoEntregable.ARCHIVO && entregableDto.getArchivo() != null
-                    && !entregableDto.getArchivo().isEmpty()) {
+        entity.setTipoEntregable(tipo);
+
+        // Manejo del archivo — su IOException queda contenida aquí
+        if (tipo == TipoEntregable.ARCHIVO) {
+            if (entregableDto.getArchivo() == null || entregableDto.getArchivo().isEmpty()) {
+                throw new TableroExcepcion("Se requiere un archivo para este tipo de entregable",
+                        HttpStatus.BAD_REQUEST);
+            }
+            try {
                 String fileName = UUID.randomUUID() + "_" + entregableDto.getArchivo().getOriginalFilename();
                 Files.copy(entregableDto.getArchivo().getInputStream(), this.rootLocation.resolve(fileName));
                 entity.setNombreArchivo(entregableDto.getArchivo().getOriginalFilename());
                 entity.setRuta(this.rootLocation.resolve(fileName).toString());
                 entity.setRecurso(fileName);
-            } else if (tipo == TipoEntregable.ENLACE) {
-                entity.setRecurso(entregableDto.getEnlace());
+            } catch (IOException e) {
+                throw new TableroExcepcion("Error al guardar el archivo", HttpStatus.INTERNAL_SERVER_ERROR);
             }
-
-            if (entregableDto.getIdTarea() != null
-                    && tareasRepositorio.existsById(UUID.fromString(entregableDto.getIdTarea()))) {
-                TareaEntity tarea = tareasRepositorio.findById(UUID.fromString(entregableDto.getIdTarea())).get();
-                if (tarea.getRecursos() != null && tarea.getRecursos().size() >= 4) {
-                    throw new RuntimeException("Límite de 4 recursos alcanzado para esta tarea");
-                }
-                entity.setTareaAsociada(tarea);
-            }
-
-            repositorio.save(entity);
-
-            return entity;
-
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Tipo de entregable inválido: " + entregableDto.getTipoEntregable());
-        } catch (IOException e) {
-            throw new RuntimeException("Error al guardar el archivo", e);
+        } else if (tipo == TipoEntregable.ENLACE) {
+            entity.setRecurso(entregableDto.getEnlace());
         }
+
+        // Asociación con tarea — una sola consulta, UUID protegido
+        if (entregableDto.getIdTarea() != null) {
+            UUID tareaId;
+            try {
+                tareaId = UUID.fromString(entregableDto.getIdTarea());
+            } catch (IllegalArgumentException e) {
+                throw new TableroExcepcion("ID de tarea con formato inválido", HttpStatus.BAD_REQUEST);
+            }
+
+            TareaEntity tarea = tareasRepositorio.findById(tareaId)
+                    .orElseThrow(() -> new TableroExcepcion("Tarea no encontrada", HttpStatus.NOT_FOUND));
+
+            if (tarea.getRecursos() != null && tarea.getRecursos().size() >= 4) {
+                throw new TableroExcepcion("Límite de 4 recursos alcanzado para esta tarea",
+                        HttpStatus.UNPROCESSABLE_ENTITY);
+            }
+
+            entity.setTareaAsociada(tarea);
+        }
+
+        return repositorio.save(entity);
     }
 
     @Override
     public void eliminarEntregable(UUID id) {
         EntregablesEntity entity = repositorio.findById(id)
-                .orElseThrow(() -> new RuntimeException("Entregable no encontrado"));
+                .orElseThrow(() -> new TableroExcepcion("Entregable no encontrado", HttpStatus.NOT_FOUND));
 
         if (entity.getTipoEntregable() == TipoEntregable.ARCHIVO && entity.getRuta() != null) {
             try {
                 Path file = Paths.get(entity.getRuta());
                 Files.deleteIfExists(file);
             } catch (IOException e) {
-                System.err.println("No se pudo eliminar el archivo: " + e.getMessage());
+                log.error("No se pudo eliminar el archivo: {}", e.getMessage());
             }
         }
         repositorio.delete(entity);
@@ -97,7 +120,7 @@ public class EntregableServiceImpl implements EntregableI {
     @Override
     public EntregablesEntity actualizarRecurso(UUID id, EntregableDtoEntrada entregableDto) {
         EntregablesEntity entity = repositorio.findById(id)
-                .orElseThrow(() -> new RuntimeException("Entregable no encontrado"));
+                .orElseThrow(() -> new TableroExcepcion("Entregable no encontrado", HttpStatus.NOT_FOUND));
 
         try {
             if (entregableDto.getTipoEntregable() != null) {
@@ -136,17 +159,24 @@ public class EntregableServiceImpl implements EntregableI {
                 }
             }
 
-            if (entregableDto.getIdTarea() != null
-                    && tareasRepositorio.existsById(UUID.fromString(entregableDto.getIdTarea()))) {
-                TareaEntity tarea = new TareaEntity();
-                tarea.setId(UUID.fromString(entregableDto.getIdTarea()));
-                entity.setTareaAsociada(tarea);
+            if (entregableDto.getIdTarea() != null) {
+                UUID tareaId;
+                try {
+                    tareaId = UUID.fromString(entregableDto.getIdTarea());
+                } catch (IllegalArgumentException e) {
+                    throw new TableroExcepcion("ID de tarea con formato inválido", HttpStatus.BAD_REQUEST);
+                }
+                if (tareasRepositorio.existsById(tareaId)) {
+                    TareaEntity tarea = new TareaEntity();
+                    tarea.setId(tareaId);
+                    entity.setTareaAsociada(tarea);
+                }
             }
 
             repositorio.save(entity);
             return entity;
         } catch (IOException e) {
-            throw new RuntimeException("Error al actualizar el archivo", e);
+            throw new TableroExcepcion("Error al actualizar el archivo", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
