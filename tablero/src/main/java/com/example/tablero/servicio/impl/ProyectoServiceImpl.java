@@ -9,6 +9,8 @@ import com.example.tablero.mapper.ProyectoMapper;
 import com.example.tablero.repositorio.PerfilRepositorio;
 import com.example.tablero.repositorio.ProyectoRepositorio;
 import com.example.tablero.servicio.interfaces.ProyectoI;
+import com.example.tablero.excepciones.excepcion.TableroExcepcion;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,7 +35,8 @@ public class ProyectoServiceImpl implements ProyectoI {
     public String guardarTarea(ProyectoDtoEntrada proyectoDto) {
         if (proyectoDto.getIdPerfil() == null
                 || !perfilRepositorio.existsById(UUID.fromString(proyectoDto.getIdPerfil()))) {
-            throw new RuntimeException("no se encontro al usuario con el id " + proyectoDto.getIdPerfil());
+            throw new TableroExcepcion("no se encontro al usuario con el id " + proyectoDto.getIdPerfil(),
+                    HttpStatus.NOT_FOUND);
         }
         PerfilEntity usuario = new PerfilEntity();
         usuario.setId(UUID.fromString(proyectoDto.getIdPerfil()));
@@ -54,7 +57,8 @@ public class ProyectoServiceImpl implements ProyectoI {
     @Override
     public ProyectoDtoSalida buscarProyecto(UUID id) {
         return mapper.proyectoM(
-                repositorio.findById(id).orElseThrow(() -> new RuntimeException("no se encontro el usuario")),
+                repositorio.findById(id).orElseThrow(
+                        () -> new TableroExcepcion("No se encontró el proyecto con id " + id, HttpStatus.NOT_FOUND)),
                 repositorio.contarTareasCompletadas(id),
                 repositorio.contarTareasPendientes(id),
                 repositorio.contarTareasEnProgreso(id),
@@ -64,15 +68,25 @@ public class ProyectoServiceImpl implements ProyectoI {
     @Override
     public void actualizarProyecto(UUID id, ProyectoDtoEntrada proyectoDto) {
         ProyectoEntity proyecto = repositorio.findById(id)
-                .orElseThrow(() -> new RuntimeException("no se encontro el proyecto"));
-        proyecto.setNombreProyecto(proyectoDto.getNombreProyecto());
-        proyecto.setCorreoCliente(proyectoDto.getCorreoCliente());
-        proyecto.setNombreCliente(proyectoDto.getNombreCliente());
+                .orElseThrow(
+                        () -> new TableroExcepcion("No se encontró el proyecto con id " + id, HttpStatus.NOT_FOUND));
+        if (proyectoDto.getNombreProyecto() != null && !proyectoDto.getNombreProyecto().isEmpty()) {
+            proyecto.setNombreProyecto(proyectoDto.getNombreProyecto());
+        }
+        if (proyectoDto.getCorreoCliente() != null && !proyectoDto.getCorreoCliente().isEmpty()) {
+            proyecto.setCorreoCliente(proyectoDto.getCorreoCliente());
+        }
+        if (proyectoDto.getNombreCliente() != null && !proyectoDto.getNombreCliente().isEmpty()) {
+            proyecto.setNombreCliente(proyectoDto.getNombreCliente());
+        }
         repositorio.save(proyecto);
     }
 
     @Override
     public void eliminarProyecto(UUID id) {
-        repositorio.deleteById(id);
+        ProyectoEntity proyecto = repositorio.findById(id)
+                .orElseThrow(
+                        () -> new TableroExcepcion("No se encontró el proyecto con id " + id, HttpStatus.NOT_FOUND));
+        repositorio.delete(proyecto);
     }
 }
