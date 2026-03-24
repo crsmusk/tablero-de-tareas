@@ -6,6 +6,8 @@ import com.example.tablero.entidades.entidades.PerfilEntity;
 import com.example.tablero.mapper.PerfilMapper;
 import com.example.tablero.repositorio.PerfilRepositorio;
 import com.example.tablero.servicio.interfaces.PerfilI;
+import com.example.tablero.excepciones.excepcion.TableroExcepcion;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -15,14 +17,15 @@ public class PerfiServiceImpl implements PerfilI {
 
     private PerfilRepositorio repositorio;
     private PerfilMapper mapper;
-    public PerfiServiceImpl(PerfilRepositorio repositorio,PerfilMapper mapper) {
+
+    public PerfiServiceImpl(PerfilRepositorio repositorio, PerfilMapper mapper) {
         this.repositorio = repositorio;
-        this.mapper=mapper;
+        this.mapper = mapper;
     }
 
     @Override
     public void guardarPerfil(PerfilDtoEntrada perfilDto) {
-        PerfilEntity usuario=new PerfilEntity();
+        PerfilEntity usuario = new PerfilEntity();
         usuario.setContraseña(perfilDto.getContraseña());
         usuario.setNombre(perfilDto.getNombre());
         usuario.setNickName(perfilDto.getNickName());
@@ -37,17 +40,27 @@ public class PerfiServiceImpl implements PerfilI {
 
     @Override
     public void eliminarPerfil(UUID id) {
-       this.repositorio.deleteById(id);
+        PerfilEntity perfil = this.repositorio.findById(id)
+                .orElseThrow(() -> new TableroExcepcion("No se encontró el perfil con id " + id, HttpStatus.NOT_FOUND));
+        this.repositorio.delete(perfil);
     }
 
     @Override
     public void actualizarPerfil(UUID id, PerfilDtoEntrada perfilDto) {
-       PerfilEntity perfil=this.repositorio.findById(id)
-               .orElseThrow(()->new RuntimeException("no se encontro el usuario con el id"+id));
-       perfil.setCorreo(perfilDto.getCorreo());
-       perfil.setNombre(perfilDto.getNombre());
-       perfil.setContraseña(perfilDto.getContraseña());
-       perfil.setNickName(perfilDto.getNickName());
-       this.repositorio.save(perfil);
+        PerfilEntity perfil = this.repositorio.findById(id)
+                .orElseThrow(() -> new TableroExcepcion("No se encontró el perfil con id " + id, HttpStatus.NOT_FOUND));
+        if (perfilDto.getCorreo() != null && !perfilDto.getCorreo().isEmpty()) {
+            perfil.setCorreo(perfilDto.getCorreo());
+        }
+        if (perfilDto.getNombre() != null && !perfilDto.getNombre().isEmpty()) {
+            perfil.setNombre(perfilDto.getNombre());
+        }
+        if (perfilDto.getContraseña() != null && !perfilDto.getContraseña().isEmpty()) {
+            perfil.setContraseña(perfilDto.getContraseña());
+        }
+        if (perfilDto.getNickName() != null && !perfilDto.getNickName().isEmpty()) {
+            perfil.setNickName(perfilDto.getNickName());
+        }
+        this.repositorio.save(perfil);
     }
 }
