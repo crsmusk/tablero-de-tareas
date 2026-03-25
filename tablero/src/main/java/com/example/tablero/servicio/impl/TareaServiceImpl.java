@@ -112,15 +112,8 @@ public class TareaServiceImpl implements TareaI {
         if (tareaDto.getDescripcion() != null && !tareaDto.getDescripcion().isEmpty()) {
             tarea.setDescripcion(tareaDto.getDescripcion());
         }
-
         if (tareaDto.getEstado() != null && !tareaDto.getEstado().isEmpty()) {
-            try {
-                tarea.setEstado(EstadosTarea.valueOf(tareaDto.getEstado().toUpperCase()));
-            } catch (IllegalArgumentException e) {
-                throw new TableroExcepcion("Estado inválido: " + tareaDto.getEstado()
-                        + ". Valores permitidos: PENDIENTE, EN_PROGRESO, EN_REVISION, COMPLETADO",
-                        HttpStatus.BAD_REQUEST);
-            }
+            tarea.setEstado(EstadosTarea.valueOf(tareaDto.getEstado().toUpperCase()));
         }
 
         if (tareaDto.getClienteAccion() != null && !tareaDto.getClienteAccion().isEmpty()) {

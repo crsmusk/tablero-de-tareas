@@ -12,6 +12,7 @@ import com.example.tablero.entidades.dtos.entrada.ProyectoDtoEntrada;
 import com.example.tablero.entidades.dtos.salida.ProyectoDtoSalida;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 import java.util.UUID;
 
 @RestController
@@ -22,7 +23,7 @@ public class ProyectoControlador {
     private ProyectoI proyectoS;
 
     @PostMapping
-    public ResponseEntity<String> guardarProyecto(@RequestBody ProyectoDtoEntrada proyectoDto) {
+    public ResponseEntity<String> guardarProyecto(@RequestBody @Valid ProyectoDtoEntrada proyectoDto) {
         return ResponseEntity.ok(proyectoS.guardarTarea(proyectoDto));
     }
 
@@ -37,7 +38,8 @@ public class ProyectoControlador {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> actualizarProyecto(@PathVariable UUID id, @RequestBody ProyectoDtoEntrada proyectoDto) {
+    public ResponseEntity<Void> actualizarProyecto(@PathVariable UUID id,
+            @RequestBody @Valid ProyectoDtoEntrada proyectoDto) {
         proyectoS.actualizarProyecto(id, proyectoDto);
         return ResponseEntity.noContent().build();
     }
