@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 import java.util.UUID;
 
@@ -18,7 +19,7 @@ public class PerfilControlador {
     private PerfilI perfilS;
 
     @PostMapping
-    public ResponseEntity<Void> guardarPerfil(@RequestBody PerfilDtoEntrada perfilDto) {
+    public ResponseEntity<Void> guardarPerfil(@RequestBody @Valid PerfilDtoEntrada perfilDto) {
         perfilS.guardarPerfil(perfilDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -29,7 +30,8 @@ public class PerfilControlador {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> actualizarPerfil(@PathVariable UUID id, @RequestBody PerfilDtoEntrada perfilDto) {
+    public ResponseEntity<Void> actualizarPerfil(@PathVariable UUID id,
+            @RequestBody @Valid PerfilDtoEntrada perfilDto) {
         perfilS.actualizarPerfil(id, perfilDto);
         return ResponseEntity.ok().build();
     }
