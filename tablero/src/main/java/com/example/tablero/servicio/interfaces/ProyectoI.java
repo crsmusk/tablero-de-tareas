@@ -8,9 +8,13 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ProyectoI {
-    public String guardarTarea(ProyectoDtoEntrada proyectoDto);
-    public List<ProyectoResumidoDtoSalida>listaProyectos();
+    public String guardarProyecto(ProyectoDtoEntrada proyectoDto);
+
+    public List<ProyectoResumidoDtoSalida> listaProyectos();
+
     public ProyectoDtoSalida buscarProyecto(UUID id);
-    public void actualizarProyecto(UUID id,ProyectoDtoEntrada proyectoDto);
+
+    public void actualizarProyecto(UUID id, ProyectoDtoEntrada proyectoDto);
+
     public void eliminarProyecto(UUID id);
 }

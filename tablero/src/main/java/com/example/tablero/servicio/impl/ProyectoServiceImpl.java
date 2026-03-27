@@ -32,7 +32,7 @@ public class ProyectoServiceImpl implements ProyectoI {
     }
 
     @Override
-    public String guardarTarea(ProyectoDtoEntrada proyectoDto) {
+    public String guardarProyecto(ProyectoDtoEntrada proyectoDto) {
         if (proyectoDto.getIdPerfil() == null
                 || !perfilRepositorio.existsById(UUID.fromString(proyectoDto.getIdPerfil()))) {
             throw new TableroExcepcion("no se encontro al usuario con el id " + proyectoDto.getIdPerfil(),

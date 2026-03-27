@@ -24,7 +24,7 @@ public class ProyectoControlador {
 
     @PostMapping
     public ResponseEntity<String> guardarProyecto(@RequestBody @Valid ProyectoDtoEntrada proyectoDto) {
-        return ResponseEntity.ok(proyectoS.guardarTarea(proyectoDto));
+        return ResponseEntity.ok(proyectoS.guardarProyecto(proyectoDto));
     }
 
     @GetMapping

@@ -13,12 +13,12 @@ import org.springframework.stereotype.Service;
 import java.util.UUID;
 
 @Service
-public class PerfiServiceImpl implements PerfilI {
+public class PerfilServiceImpl implements PerfilI {
 
     private PerfilRepositorio repositorio;
     private PerfilMapper mapper;
 
-    public PerfiServiceImpl(PerfilRepositorio repositorio, PerfilMapper mapper) {
+    public PerfilServiceImpl(PerfilRepositorio repositorio, PerfilMapper mapper) {
         this.repositorio = repositorio;
         this.mapper = mapper;
     }
