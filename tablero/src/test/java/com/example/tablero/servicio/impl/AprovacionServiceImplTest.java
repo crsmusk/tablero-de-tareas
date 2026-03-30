@@ -2,7 +2,7 @@ package com.example.tablero.servicio.impl;
 
 import com.example.tablero.entidades.dtos.entrada.AprovacionDtoEntrada;
 import com.example.tablero.entidades.dtos.salida.AprovacionesDtoSalida;
-import com.example.tablero.entidades.entidades.AprovacionEntity;
+import com.example.tablero.entidades.dtos.salida.AprovacionesDtoSalida;
 import com.example.tablero.entidades.entidades.TareaEntity;
 import com.example.tablero.entidades.entidades.enums.EstadoAprovado;
 import com.example.tablero.entidades.entidades.enums.EstadosTarea;
