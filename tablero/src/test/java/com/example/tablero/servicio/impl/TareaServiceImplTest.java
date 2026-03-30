@@ -78,7 +78,6 @@ class TareaServiceImplTest {
 
         when(repositorioProyecto.existsById(proyectoId)).thenReturn(true);
 
-        // Simular que el repositorio asigna un ID al guardar
         doAnswer(invocation -> {
             TareaEntity t = invocation.getArgument(0);
             t.setId(tareaId);

@@ -24,8 +24,13 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AprovacionServiceImpl implements AprovacionI {
 
-    private final TareaRepositorio tareaRepositorio;
-    private final AprovacionMapper aprovacionMapper;
+    private TareaRepositorio tareaRepositorio;
+    private AprovacionMapper aprovacionMapper;
+
+    public AprovacionServiceImpl(TareaRepositorio tareaRepositorio, AprovacionMapper aprovacionMapper) {
+        this.tareaRepositorio = tareaRepositorio;
+        this.aprovacionMapper = aprovacionMapper;
+    }
 
     @Override
     @Transactional
