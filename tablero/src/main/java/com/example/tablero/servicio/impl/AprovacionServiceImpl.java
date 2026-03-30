@@ -24,9 +24,13 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AprovacionServiceImpl implements AprovacionI {
 
-    private final AprovacionRepositorio aprovacionRepositorio;
-    private final TareaRepositorio tareaRepositorio;
-    private final AprovacionMapper aprovacionMapper;
+    private TareaRepositorio tareaRepositorio;
+    private AprovacionMapper aprovacionMapper;
+
+    public AprovacionServiceImpl(TareaRepositorio tareaRepositorio, AprovacionMapper aprovacionMapper) {
+        this.tareaRepositorio = tareaRepositorio;
+        this.aprovacionMapper = aprovacionMapper;
+    }
 
     @Override
     @Transactional
@@ -45,8 +49,6 @@ public class AprovacionServiceImpl implements AprovacionI {
         aprovacion.setComentario(dto.getComentario());
         aprovacion.setFecha(LocalDate.now());
 
-        // La relación @OneToMany con @JoinColumn en TareaEntity requiere que añadamos a
-        // la lista
         tarea.getAprovaciones().add(aprovacion);
 
         tareaRepositorio.save(tarea);
