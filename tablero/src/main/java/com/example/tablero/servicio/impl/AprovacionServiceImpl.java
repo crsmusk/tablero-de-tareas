@@ -2,7 +2,7 @@ package com.example.tablero.servicio.impl;
 
 import com.example.tablero.entidades.dtos.entrada.AprovacionDtoEntrada;
 import com.example.tablero.entidades.dtos.salida.AprovacionesDtoSalida;
-import com.example.tablero.entidades.entidades.AprovacionEntity;
+import com.example.tablero.entidades.dtos.salida.AprovacionesDtoSalida;
 import com.example.tablero.entidades.entidades.TareaEntity;
 import com.example.tablero.entidades.entidades.enums.EstadoAprovado;
 import com.example.tablero.entidades.entidades.enums.EstadosTarea;
@@ -24,7 +24,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AprovacionServiceImpl implements AprovacionI {
 
-    private final AprovacionRepositorio aprovacionRepositorio;
     private final TareaRepositorio tareaRepositorio;
     private final AprovacionMapper aprovacionMapper;
 
@@ -45,8 +44,6 @@ public class AprovacionServiceImpl implements AprovacionI {
         aprovacion.setComentario(dto.getComentario());
         aprovacion.setFecha(LocalDate.now());
 
-        // La relación @OneToMany con @JoinColumn en TareaEntity requiere que añadamos a
-        // la lista
         tarea.getAprovaciones().add(aprovacion);
 
         tareaRepositorio.save(tarea);

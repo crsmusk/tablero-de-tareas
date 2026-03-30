@@ -73,7 +73,7 @@ Este proyecto sigue una política estricta de "main protegida". El agente debe a
 *   **Commits Atómicos:** 
     *   Se deben realizar commits después de cada cambio lógico o tarea atómica completada.
     *   Cada commit debe dejar el código en un estado funcional y servir como un "punto de guardado" para posibles reversiones.
-*   **Estándar de Mensajes:** Es obligatorio usar *Conventional Commits* (ej. `feat:`, `fix:`, `docs:`, `test:`) para permitir la automatización de versiones y notas de lanzamiento mediante *Release Please*.
+*   **Estándar de Mensajes:** Es obligatorio usar *Conventional Commits* (ej. `feat:`, `fix:`, `docs:`, `test:`) para permitir la automatización de versiones y notas de lanzamiento mediante *Release Please*. **Los mensajes de commit deben redactarse íntegramente en español** (ej. `feat: agregar controlador de aprobación`).
 *   **Uso de Pull Requests (PR):**
     *   La integración en `main` solo se permite mediante un Pull Request formal.
     *   El agente debe esperar a que los checks automáticos (Lint, Tests, Seguridad) pasen satisfactoriamente antes de solicitar el merge.
