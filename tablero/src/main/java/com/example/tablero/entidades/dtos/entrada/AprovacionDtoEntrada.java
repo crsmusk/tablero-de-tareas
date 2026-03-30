@@ -19,4 +19,6 @@ public class AprovacionDtoEntrada {
     @Pattern(regexp = "^(APROVADO|CAMBIOS_SOLICITADOS|RECHAZADA)$", message = "El estado de aprobación debe ser APROVADO, CAMBIOS_SOLICITADOS o RECHAZADA")
     private String estadoAprovacion;
     private String comentario;
+    @NotBlank(message = "El id de la tarea es obligatorio")
+    private String idTarea;
 }
