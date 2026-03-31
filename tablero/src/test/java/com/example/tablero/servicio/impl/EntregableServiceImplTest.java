@@ -4,24 +4,18 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.io.TempDir;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import com.example.tablero.entidades.dtos.entrada.EntregableDtoEntrada;
 import com.example.tablero.entidades.dtos.salida.EntregableDtoSalida;
@@ -32,6 +26,7 @@ import com.example.tablero.excepciones.excepcion.TableroExcepcion;
 import com.example.tablero.mapper.EntregableMapper;
 import com.example.tablero.repositorio.EntregablesRepositorio;
 import com.example.tablero.repositorio.TareaRepositorio;
+import com.example.tablero.servicio.interfaces.AlmacenamientoI;
 
 @ExtendWith(MockitoExtension.class)
 class EntregableServiceImplTest {
@@ -45,17 +40,11 @@ class EntregableServiceImplTest {
     @Mock
     private TareaRepositorio tareasRepositorio;
 
+    @Mock
+    private AlmacenamientoI almacenamientoService;
+
     @InjectMocks
     private EntregableServiceImpl service;
-
-    @TempDir
-    Path tempDir;
-
-    @BeforeEach
-    void setUp() {
-        // Inyectamos el directorio temporal para evitar usar la carpeta real 'uploads'
-        ReflectionTestUtils.setField(service, "rootLocation", tempDir);
-    }
 
     // --- Tests para guardarEntregable ---
 
@@ -74,21 +63,17 @@ class EntregableServiceImplTest {
         tarea.setRecursos(new ArrayList<>());
 
         when(tareasRepositorio.findById(tareaId)).thenReturn(Optional.of(tarea));
-        when(repositorio.save(any(EntregablesEntity.class))).thenAnswer(i -> i.getArguments()[0]);
 
         // When
-        EntregablesEntity resultado = service.guardarEntregable(dto);
+        service.guardarEntregable(dto);
 
         // Then
-        assertNotNull(resultado);
-        assertEquals(TipoEntregable.ENLACE, resultado.getTipoEntregable());
-        assertEquals("http://google.com", resultado.getRecurso());
-        assertEquals(tarea, resultado.getTareaAsociada());
         verify(repositorio).save(any(EntregablesEntity.class));
+        verify(almacenamientoService, never()).guardarArchivo(any());
     }
 
     @Test
-    void debeGuardarEntregableTipoArchivo() throws IOException {
+    void debeGuardarEntregableTipoArchivo() {
         // Given
         MockMultipartFile archivo = new MockMultipartFile("archivo", "test.txt", "text/plain", "contenido".getBytes());
         EntregableDtoEntrada dto = EntregableDtoEntrada.builder()
@@ -96,17 +81,13 @@ class EntregableServiceImplTest {
                 .archivo(archivo)
                 .build();
 
-        when(repositorio.save(any(EntregablesEntity.class))).thenAnswer(i -> i.getArguments()[0]);
+        when(almacenamientoService.guardarArchivo(archivo)).thenReturn("uuid_test.txt");
 
         // When
-        EntregablesEntity resultado = service.guardarEntregable(dto);
+        service.guardarEntregable(dto);
 
         // Then
-        assertNotNull(resultado);
-        assertEquals(TipoEntregable.ARCHIVO, resultado.getTipoEntregable());
-        assertEquals("test.txt", resultado.getNombreArchivo());
-        assertTrue(resultado.getRuta().contains("test.txt"));
-        assertTrue(Files.exists(tempDir.resolve(resultado.getRecurso())));
+        verify(almacenamientoService).guardarArchivo(archivo);
         verify(repositorio).save(any(EntregablesEntity.class));
     }
 
@@ -165,7 +146,6 @@ class EntregableServiceImplTest {
 
         TareaEntity tarea = new TareaEntity();
         tarea.setId(tareaId);
-        // Simulamos 4 entregables existentes
         List<EntregablesEntity> recursos = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
             recursos.add(new EntregablesEntity());
@@ -211,19 +191,17 @@ class EntregableServiceImplTest {
 
         // Then
         verify(repositorio).delete(entity);
+        verify(almacenamientoService, never()).eliminarArchivo(any());
     }
 
     @Test
-    void debeEliminarEntregableTipoArchivoYBorrarFisico() throws IOException {
+    void debeEliminarEntregableTipoArchivoYDelegarBorrado() {
         // Given
         UUID id = UUID.randomUUID();
-        Path dummyFile = tempDir.resolve("delete_me.txt");
-        Files.createFile(dummyFile);
-
         EntregablesEntity entity = new EntregablesEntity();
         entity.setId(id);
         entity.setTipoEntregable(TipoEntregable.ARCHIVO);
-        entity.setRuta(dummyFile.toString());
+        entity.setRuta("uploads/archivo.txt");
 
         when(repositorio.findById(id)).thenReturn(Optional.of(entity));
 
@@ -231,7 +209,7 @@ class EntregableServiceImplTest {
         service.eliminarEntregable(id);
 
         // Then
-        assertFalse(Files.exists(dummyFile));
+        verify(almacenamientoService).eliminarArchivo("uploads/archivo.txt");
         verify(repositorio).delete(entity);
     }
 
@@ -250,16 +228,13 @@ class EntregableServiceImplTest {
     // --- Tests para actualizarRecurso ---
 
     @Test
-    void debeActualizarDeArchivoAEnlaceYBorrarArchivoAnterior() throws IOException {
+    void debeActualizarDeArchivoAEnlaceYDelegarBorrado() {
         // Given
         UUID id = UUID.randomUUID();
-        Path oldFile = tempDir.resolve("old.txt");
-        Files.createFile(oldFile);
-
         EntregablesEntity entity = new EntregablesEntity();
         entity.setId(id);
         entity.setTipoEntregable(TipoEntregable.ARCHIVO);
-        entity.setRuta(oldFile.toString());
+        entity.setRuta("uploads/old.txt");
 
         EntregableDtoEntrada dto = EntregableDtoEntrada.builder()
                 .tipoEntregable("ENLACE")
@@ -269,26 +244,23 @@ class EntregableServiceImplTest {
         when(repositorio.findById(id)).thenReturn(Optional.of(entity));
 
         // When
-        EntregablesEntity resultado = service.actualizarRecurso(id, dto);
+        service.actualizarRecurso(id, dto);
 
         // Then
-        assertEquals(TipoEntregable.ENLACE, resultado.getTipoEntregable());
-        assertEquals("http://newlink.com", resultado.getRecurso());
-        assertFalse(Files.exists(oldFile));
+        verify(almacenamientoService).eliminarArchivo("uploads/old.txt");
+        assertEquals(TipoEntregable.ENLACE, entity.getTipoEntregable());
+        assertEquals("http://newlink.com", entity.getRecurso());
         verify(repositorio).save(entity);
     }
 
     @Test
-    void debeActualizarArchivoYPisaroAnterior() throws IOException {
+    void debeActualizarArchivoYDelegarBorradoDelAnterior() {
         // Given
         UUID id = UUID.randomUUID();
-        Path oldFile = tempDir.resolve("old_file.txt");
-        Files.createFile(oldFile);
-
         EntregablesEntity entity = new EntregablesEntity();
         entity.setId(id);
         entity.setTipoEntregable(TipoEntregable.ARCHIVO);
-        entity.setRuta(oldFile.toString());
+        entity.setRuta("uploads/old_file.txt");
 
         MockMultipartFile newArchivo = new MockMultipartFile("archivo", "new.txt", "text/plain",
                 "nuevo contenido".getBytes());
@@ -298,15 +270,15 @@ class EntregableServiceImplTest {
                 .build();
 
         when(repositorio.findById(id)).thenReturn(Optional.of(entity));
+        when(almacenamientoService.guardarArchivo(newArchivo)).thenReturn("uuid_new.txt");
 
         // When
-        EntregablesEntity resultado = service.actualizarRecurso(id, dto);
+        service.actualizarRecurso(id, dto);
 
         // Then
-        assertEquals(TipoEntregable.ARCHIVO, resultado.getTipoEntregable());
-        assertEquals("new.txt", resultado.getNombreArchivo());
-        assertFalse(Files.exists(oldFile));
-        assertTrue(Files.exists(tempDir.resolve(resultado.getRecurso())));
+        verify(almacenamientoService).eliminarArchivo("uploads/old_file.txt");
+        verify(almacenamientoService).guardarArchivo(newArchivo);
+        assertEquals("new.txt", entity.getNombreArchivo());
         verify(repositorio).save(entity);
     }
 
