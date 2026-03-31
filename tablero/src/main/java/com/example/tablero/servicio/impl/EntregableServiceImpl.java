@@ -11,7 +11,6 @@ import com.example.tablero.repositorio.EntregablesRepositorio;
 import com.example.tablero.repositorio.TareaRepositorio;
 import com.example.tablero.servicio.interfaces.AlmacenamientoI;
 import com.example.tablero.servicio.interfaces.EntregableI;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,13 +19,21 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 public class EntregableServiceImpl implements EntregableI {
 
-    private final EntregablesRepositorio repositorio;
-    private final EntregableMapper mapper;
-    private final TareaRepositorio tareasRepositorio;
-    private final AlmacenamientoI almacenamientoService;
+    private EntregablesRepositorio repositorio;
+    private EntregableMapper mapper;
+    private TareaRepositorio tareasRepositorio;
+    private AlmacenamientoI almacenamientoService;
+
+    public EntregableServiceImpl(EntregablesRepositorio repositorio, EntregableMapper mapper,
+            TareaRepositorio tareasRepositorio,
+            AlmacenamientoI almacenamientoService) {
+        this.repositorio = repositorio;
+        this.mapper = mapper;
+        this.tareasRepositorio = tareasRepositorio;
+        this.almacenamientoService = almacenamientoService;
+    }
 
     @Override
     @Transactional

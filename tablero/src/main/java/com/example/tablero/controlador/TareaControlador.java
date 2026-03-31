@@ -3,7 +3,6 @@ package com.example.tablero.controlador;
 import com.example.tablero.entidades.dtos.entrada.TareaDtoEntrada;
 import com.example.tablero.entidades.dtos.salida.TareaDtoSalida;
 import com.example.tablero.servicio.interfaces.TareaI;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,8 +16,11 @@ import java.util.UUID;
 // @CrossOrigin("*")
 public class TareaControlador {
 
-    @Autowired
     private TareaI tareaS;
+
+    public TareaControlador(TareaI tareaS) {
+        this.tareaS = tareaS;
+    }
 
     @PostMapping
     public ResponseEntity<Void> guardarTarea(@RequestBody @Valid TareaDtoEntrada tareaDto) {

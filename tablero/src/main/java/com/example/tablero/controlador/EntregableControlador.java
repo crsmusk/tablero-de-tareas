@@ -4,7 +4,6 @@ import com.example.tablero.entidades.dtos.entrada.EntregableDtoEntrada;
 import com.example.tablero.entidades.dtos.salida.EntregableDtoSalida;
 import com.example.tablero.servicio.interfaces.EntregableI;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,10 +13,13 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/entregable")
-@RequiredArgsConstructor
 public class EntregableControlador {
 
-    private final EntregableI entregableS;
+    private EntregableI entregableS;
+
+    public EntregableControlador(EntregableI entregableS) {
+        this.entregableS = entregableS;
+    }
 
     @PostMapping
     public ResponseEntity<Void> guardarEntregable(

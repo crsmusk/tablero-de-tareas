@@ -2,8 +2,6 @@ package com.example.tablero.controlador;
 
 import com.example.tablero.entidades.dtos.salida.ProyectoResumidoDtoSalida;
 import com.example.tablero.servicio.interfaces.ProyectoI;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
@@ -19,8 +17,11 @@ import java.util.UUID;
 @RequestMapping("/proyectos")
 public class ProyectoControlador {
 
-    @Autowired
     private ProyectoI proyectoS;
+
+    public ProyectoControlador(ProyectoI proyectoS) {
+        this.proyectoS = proyectoS;
+    }
 
     @PostMapping
     public ResponseEntity<String> guardarProyecto(@RequestBody @Valid ProyectoDtoEntrada proyectoDto) {

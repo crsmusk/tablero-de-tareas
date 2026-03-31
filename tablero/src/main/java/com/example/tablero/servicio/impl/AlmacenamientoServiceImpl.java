@@ -57,7 +57,7 @@ public class AlmacenamientoServiceImpl implements AlmacenamientoI {
             Path archivo = Paths.get(ruta);
             Files.deleteIfExists(archivo);
         } catch (IOException e) {
-            log.error("No se pudo eliminar el archivo físico: {}", e.getMessage());
+            log.error("No se pudo eliminar el archivo ", e.getMessage());
         }
     }
 
