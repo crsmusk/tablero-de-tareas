@@ -8,10 +8,8 @@ import com.example.tablero.entidades.entidades.enums.EstadoAprovado;
 import com.example.tablero.entidades.entidades.enums.EstadosTarea;
 import com.example.tablero.excepciones.excepcion.TableroExcepcion;
 import com.example.tablero.mapper.AprovacionMapper;
-import com.example.tablero.repositorio.AprovacionRepositorio;
 import com.example.tablero.repositorio.TareaRepositorio;
 import com.example.tablero.servicio.interfaces.AprovacionI;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +19,6 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 public class AprovacionServiceImpl implements AprovacionI {
 
     private TareaRepositorio tareaRepositorio;

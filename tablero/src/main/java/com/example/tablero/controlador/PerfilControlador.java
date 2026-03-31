@@ -3,11 +3,10 @@ package com.example.tablero.controlador;
 import com.example.tablero.entidades.dtos.entrada.PerfilDtoEntrada;
 import com.example.tablero.entidades.dtos.salida.PerfilDtoSalida;
 import com.example.tablero.servicio.interfaces.PerfilI;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import jakarta.validation.Valid;
 
 import java.util.UUID;
 
@@ -15,8 +14,11 @@ import java.util.UUID;
 @RequestMapping("/perfil")
 public class PerfilControlador {
 
-    @Autowired
     private PerfilI perfilS;
+
+    public PerfilControlador(PerfilI perfilS) {
+        this.perfilS = perfilS;
+    }
 
     @PostMapping
     public ResponseEntity<Void> guardarPerfil(@RequestBody @Valid PerfilDtoEntrada perfilDto) {
