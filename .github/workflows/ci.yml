@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  security:
+    name: Security Review
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Escanear secretos expuestos
+        uses: trufflesecurity/trufflehog@main
+        with:
+          extra_args: --only-verified
+
+  build-and-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tablero
+
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Configurar JDK 21 (Temurin)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+          cache-dependency-path: tablero/pom.xml
+
+      - name: Dar permisos de ejecución a mvnw
+        run: chmod +x mvnw
+
+      - name: Compilar el proyecto
+        run: ./mvnw compile -B -q
+
+      - name: Ejecutar tests
+        run: ./mvnw test -B
