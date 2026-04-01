@@ -1,0 +1,41 @@
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+name: release-please
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          release-type: maven
+
+      - uses: actions/checkout@v4
+        if: ${{ steps.release.outputs.release_created }}
+
+      - name: Configurar JDK 21 (Temurin)
+        if: ${{ steps.release.outputs.release_created }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+          cache-dependency-path: tablero/pom.xml
+
+      - name: Dar permisos de ejecución a mvnw
+        if: ${{ steps.release.outputs.release_created }}
+        run: chmod +x tablero/mvnw
+
+      - name: Construir el proyecto
+        if: ${{ steps.release.outputs.release_created }}
+        run: ./tablero/mvnw clean package -DskipTests -B -q -f tablero/pom.xml
