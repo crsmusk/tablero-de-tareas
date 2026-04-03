@@ -57,7 +57,7 @@ class AprovacionServiceImplTest {
         // Given
         AprovacionDtoEntrada dto = AprovacionDtoEntrada.builder()
                 .idTarea(tareaId.toString())
-                .estadoAprovacion("APROVADO")
+                .estadoAprovacion("APROBADO")
                 .comentario("Excelente trabajo")
                 .build();
 
@@ -69,7 +69,7 @@ class AprovacionServiceImplTest {
         // Then
         verify(tareaRepositorio).save(tarea);
         assertEquals(1, tarea.getAprovaciones().size());
-        assertEquals(EstadoAprovado.APROVADO, tarea.getAprovaciones().getFirst().getEstadoAprovacion());
+        assertEquals(EstadoAprovado.APROBADO, tarea.getAprovaciones().getFirst().getEstadoAprovacion());
         assertEquals("Excelente trabajo", tarea.getAprovaciones().getFirst().getComentario());
     }
 
