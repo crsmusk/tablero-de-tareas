@@ -125,7 +125,7 @@ recurso: "URL o nombre del recurso"
 ```json
 {
   "id": "uuid-aprobacion",
-  "estadoAprovacion": "APROVADO",
+  "estadoAprovacion": "APROBADO",
   "comentario": "Revisado y conforme a lo solicitado",
   "fecha": "2026-04-02"
 }

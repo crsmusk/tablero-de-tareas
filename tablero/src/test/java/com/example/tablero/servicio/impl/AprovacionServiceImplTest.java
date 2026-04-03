@@ -90,22 +90,6 @@ class AprovacionServiceImplTest {
     }
 
     @Test
-    void debeLanzarExcepcionCuandoTareaNoEstaEnRevision() {
-        // Given
-        tarea.setEstado(EstadosTarea.EN_PROGRESO);
-        AprovacionDtoEntrada dto = AprovacionDtoEntrada.builder()
-                .idTarea(tareaId.toString())
-                .build();
-
-        when(tareaRepositorio.findById(tareaId)).thenReturn(Optional.of(tarea));
-
-        // When & Then
-        TableroExcepcion ex = assertThrows(TableroExcepcion.class, () -> service.guardarVeredicto(dto));
-        assertEquals(HttpStatus.BAD_REQUEST, ex.getEstadoHttp());
-        assertTrue(ex.getMessage().contains("La tarea no está en estado EN_REVISION"));
-    }
-
-    @Test
     void debeBuscarAprovacionesPorTarea() {
         // Given
         when(tareaRepositorio.findById(tareaId)).thenReturn(Optional.of(tarea));

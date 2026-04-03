@@ -8,15 +8,13 @@ import lombok.NoArgsConstructor;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
-import java.time.LocalDate;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Data
 public class AprovacionDtoEntrada {
     @NotBlank(message = "El estado de aprobación es obligatorio")
-    @Pattern(regexp = "^(APROVADO|CAMBIOS_SOLICITADOS|RECHAZADA)$", message = "El estado de aprobación debe ser APROVADO, CAMBIOS_SOLICITADOS o RECHAZADA")
+    @Pattern(regexp = "^(APROBADO|CAMBIOS_SOLICITADOS|RECHAZADA)$", message = "El estado de aprobación debe ser APROBADO, CAMBIOS_SOLICITADOS o RECHAZADA")
     private String estadoAprovacion;
     private String comentario;
     @NotBlank(message = "El id de la tarea es obligatorio")

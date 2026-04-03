@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +28,7 @@ public class EntregableControlador {
         this.entregableS = entregableS;
     }
 
-    @PostMapping(consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Guardar un entregable", description = "Registra un nuevo entregable asociado a una tarea")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Entregable guardado exitosamente"),
@@ -46,7 +47,7 @@ public class EntregableControlador {
         return ResponseEntity.ok(entregableS.listarEntregables());
     }
 
-    @PutMapping(value = "/{id}", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Actualizar entregable", description = "Modifica los datos de un entregable existente")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Entregable actualizado exitosamente"),
