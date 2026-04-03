@@ -103,6 +103,36 @@ recurso: "URL o nombre del recurso"
 
 ---
 
+## AprovacionController
+
+**Base Path:** `/aprovaciones`
+
+| Método | Ruta | Descripción | Body (Entrada) | Respuesta | Código HTTP |
+|--------|------|-------------|-----------------|-----------|-------------|
+| `POST` | `/aprovaciones` | Guardar un veredicto de aprobación | `AprovacionDtoEntrada` | Vacío | `201 Created` |
+| `GET` | `/aprovaciones/tarea/{id}` | Buscar aprobaciones por Tarea | - | `List<AprovacionesDtoSalida>` | `200 OK` |
+
+### AprovacionDtoEntrada (JSON)
+```json
+{
+  "estadoAprovacion": "APROVADO",
+  "comentario": "Revisado y conforme a lo solicitado",
+  "idTarea": "uuid-de-la-tarea"
+}
+```
+
+### AprovacionesDtoSalida (JSON)
+```json
+{
+  "id": "uuid-aprobacion",
+  "estadoAprovacion": "APROVADO",
+  "comentario": "Revisado y conforme a lo solicitado",
+  "fecha": "2026-04-02"
+}
+```
+
+---
+
 ## Estructura Común de Error
 
 Todas las respuestas de error devuelven el formato `ErrorDtoSalida`:

@@ -125,4 +125,5 @@ void debeLanzarExcepcionCuandoElTituloEsVacio() { ... }
 ## Arquitectura
 - No inyectar `*Repositorio` directamente en `*Controlador`.
 - No exponer `*Entity` en respuestas REST; siempre usar `*DtoSalida` vía `*Mapper`.
+- **Documentación de API:** Es mandatorio que todo controlador incluya anotaciones Swagger (`springdoc-openapi`). Usa obligatoriamente `@Tag` en clases, y `@Operation` y `@ApiResponses` en cada endpoint. Especifica de forma explícita el `MediaType` (`consumes`/`produces`) cuando interactúes con archivos multipart.
 - Ver [documentación de arquitectura](architecture.md) para el flujo completo.
