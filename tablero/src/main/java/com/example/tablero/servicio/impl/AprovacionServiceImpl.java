@@ -36,11 +36,6 @@ public class AprovacionServiceImpl implements AprovacionI {
                 .orElseThrow(() -> new TableroExcepcion("No se encontró la tarea con ID: " + dto.getIdTarea(),
                         HttpStatus.NOT_FOUND));
 
-        if (tarea.getEstado() != EstadosTarea.EN_REVISION) {
-            throw new TableroExcepcion("La tarea no está en estado EN_REVISION. Estado actual: " + tarea.getEstado(),
-                    HttpStatus.BAD_REQUEST);
-        }
-
         AprovacionEntity aprovacion = new AprovacionEntity();
         aprovacion.setEstadoAprovacion(EstadoAprovado.valueOf(dto.getEstadoAprovacion()));
         aprovacion.setComentario(dto.getComentario());
