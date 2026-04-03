@@ -5,7 +5,6 @@ import com.example.tablero.entidades.dtos.salida.AprovacionesDtoSalida;
 import com.example.tablero.entidades.entidades.AprovacionEntity;
 import com.example.tablero.entidades.entidades.TareaEntity;
 import com.example.tablero.entidades.entidades.enums.EstadoAprovado;
-import com.example.tablero.entidades.entidades.enums.EstadosTarea;
 import com.example.tablero.excepciones.excepcion.TableroExcepcion;
 import com.example.tablero.mapper.AprovacionMapper;
 import com.example.tablero.repositorio.TareaRepositorio;
@@ -35,11 +34,6 @@ public class AprovacionServiceImpl implements AprovacionI {
         TareaEntity tarea = tareaRepositorio.findById(UUID.fromString(dto.getIdTarea()))
                 .orElseThrow(() -> new TableroExcepcion("No se encontró la tarea con ID: " + dto.getIdTarea(),
                         HttpStatus.NOT_FOUND));
-
-        if (tarea.getEstado() != EstadosTarea.EN_REVISION) {
-            throw new TableroExcepcion("La tarea no está en estado EN_REVISION. Estado actual: " + tarea.getEstado(),
-                    HttpStatus.BAD_REQUEST);
-        }
 
         AprovacionEntity aprovacion = new AprovacionEntity();
         aprovacion.setEstadoAprovacion(EstadoAprovado.valueOf(dto.getEstadoAprovacion()));
