@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.1.0](https://github.com/crsmusk/tablero-de-tareas/compare/v1.0.0...v1.1.0) (2026-04-04)
+
+
+### Features
+
+* agregar dependencias y configuracion base de swagger openapi ([de6cf0a](https://github.com/crsmusk/tablero-de-tareas/commit/de6cf0af3ed86436ca8a9925de63d96bc7e1256d))
+* implementar anotaciones swagger openapi en los controladores ([ffa6978](https://github.com/crsmusk/tablero-de-tareas/commit/ffa69784314c0220115dddafaa4a91a98587f324))
+* Implementar un sistema de aprobación con servicio, controlador, DTOs, pruebas, configuración de Swagger y documentación de la API. ([8f844ce](https://github.com/crsmusk/tablero-de-tareas/commit/8f844ce531f676b760d5ca8b39f8defc39eb4b01))
+
+
+### Documentation
+
+* actualizar manuales de api, contributing y agent para requerir OpenAPI ([a8d2099](https://github.com/crsmusk/tablero-de-tareas/commit/a8d20998abbc5f1e1e713f838af3e7f18e453f47))
+
 ## 1.0.0 (2026-04-01)
 
 
