@@ -10,6 +10,8 @@ import lombok.ToString;
 import lombok.EqualsAndHashCode;
 
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.UUID;
 
 @NoArgsConstructor
@@ -33,4 +35,10 @@ public class PerfilEntity {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private List<ProyectoEntity> proyectos;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "perfiles_roles", joinColumns = @JoinColumn(name = "perfil_id"), inverseJoinColumns = @JoinColumn(name = "rol_id"))
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<RolEntity> roles = new HashSet<>();
 }
