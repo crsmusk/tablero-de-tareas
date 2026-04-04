@@ -3,6 +3,7 @@ package com.example.tablero.controlador;
 import com.example.tablero.entidades.dtos.entrada.PerfilDtoEntrada;
 import com.example.tablero.entidades.dtos.salida.PerfilDtoSalida;
 import com.example.tablero.servicio.interfaces.PerfilI;
+import org.springframework.security.access.prepost.PreAuthorize;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -39,6 +40,7 @@ public class PerfilControlador {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Buscar perfil por ID", description = "Obtiene los detalles de un perfil por su UUID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Perfil recuperado correctamente"),
@@ -50,6 +52,7 @@ public class PerfilControlador {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Actualizar perfil", description = "Modifica los datos de un perfil existente")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Perfil actualizado exitosamente"),
@@ -63,6 +66,7 @@ public class PerfilControlador {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Eliminar perfil", description = "Elimina un perfil del sistema")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Perfil eliminado exitosamente"),

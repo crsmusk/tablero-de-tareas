@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,6 +29,7 @@ public class ProyectoControlador {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Crear un nuevo proyecto", description = "Registra un nuevo proyecto en el sistema")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Proyecto guardado exitosamente (retorna un mensaje confirmación)"),
@@ -39,6 +41,7 @@ public class ProyectoControlador {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Listar proyectos resumidos", description = "Devuelve el listado de todos los proyectos con información resumida")
     @ApiResponse(responseCode = "200", description = "Listado recuperado correctamente")
     public ResponseEntity<List<ProyectoResumidoDtoSalida>> listarProyectos() {
@@ -46,6 +49,7 @@ public class ProyectoControlador {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Buscar un proyecto", description = "Devuelve todos los detalles de un proyecto en específico")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Proyecto recuperado correctamente"),
@@ -57,6 +61,7 @@ public class ProyectoControlador {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Actualizar proyecto", description = "Actualiza los datos de un proyecto específico")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Proyecto actualizado exitosamente"),
@@ -70,6 +75,7 @@ public class ProyectoControlador {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Eliminar proyecto", description = "Elimina un proyecto del sistema")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Proyecto eliminado exitosamente"),
