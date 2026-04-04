@@ -1,6 +1,5 @@
 package com.example.tablero.entidades.dtos.salida;
 
-import com.example.tablero.entidades.entidades.enums.EstadoAprovado;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

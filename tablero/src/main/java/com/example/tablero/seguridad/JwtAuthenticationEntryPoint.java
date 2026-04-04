@@ -15,10 +15,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.time.LocalDateTime;
 
-/**
- * Manejador que se activa cuando un usuario no autenticado intenta acceder
- * a un recurso protegido. Retorna un error 401 (Unauthorized).
- */
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
