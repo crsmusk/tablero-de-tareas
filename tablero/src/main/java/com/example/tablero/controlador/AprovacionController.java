@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +29,7 @@ public class AprovacionController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER', 'CLIENT_VIEWER')")
     @Operation(summary = "Guardar un veredicto de aprobación", description = "Registra una nueva evaluación (aprobada/rechazada) para un entregable o tarea")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Veredicto creado exitosamente"),
@@ -40,6 +42,7 @@ public class AprovacionController {
     }
 
     @GetMapping("/tarea/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER', 'CLIENT_VIEWER')")
     @Operation(summary = "Buscar aprobaciones por Tarea", description = "Devuelve el listado completo de aprobaciones asociadas a una tarea específica")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Listado de aprobaciones recuperado correctamente"),

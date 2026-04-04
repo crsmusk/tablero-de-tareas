@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 import java.util.UUID;
@@ -29,6 +30,7 @@ public class EntregableControlador {
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Guardar un entregable", description = "Registra un nuevo entregable asociado a una tarea")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Entregable guardado exitosamente"),
@@ -41,6 +43,7 @@ public class EntregableControlador {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER', 'CLIENT_VIEWER')")
     @Operation(summary = "Listar todos los entregables", description = "Devuelve una lista con todos los entregables registrados")
     @ApiResponse(responseCode = "200", description = "Listado recuperado correctamente")
     public ResponseEntity<List<EntregableDtoSalida>> listarEntregables() {
@@ -48,6 +51,7 @@ public class EntregableControlador {
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Actualizar entregable", description = "Modifica los datos de un entregable existente")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Entregable actualizado exitosamente"),
@@ -61,6 +65,7 @@ public class EntregableControlador {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Eliminar entregable", description = "Elimina un entregable específico por su identificador")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Entregable eliminado exitosamente"),
