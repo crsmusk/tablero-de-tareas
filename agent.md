@@ -110,3 +110,31 @@ La documentación técnica del proyecto está modularizada en la carpeta `docs/`
     *   Si se agrega o modifica una entidad/enum, actualizar `docs/database-schema.md`.
     *   Si se modifica la arquitectura de paquetes, actualizar `docs/architecture.md`.
     *   NO DEBE eliminarse documentación existente sin justificación aprobada por el humano.
+
+## 10. Estándares de Seguridad (JWT & Spring Security)
+
+El proyecto utiliza un modelo de seguridad basado en **JSON Web Tokens (JWT)** y **Spring Security**, diseñado para ser escalable y stateless.
+
+*   **Estrategia de Autenticación:**
+    *   **Stateless:** La aplicación DEBE ser estrictamente *stateless*. No se deben usar sesiones de servidor (`HttpSession`).
+    *   **JWT Obligatorio:** Toda petición a endpoints protegidos DEBE incluir un token JWT válido.
+    *   **Esquema de Autorización:** Se DEBE usar el encabezado `Authorization` con el prefijo `Bearer ` (ej. `Authorization: Bearer <token>`).
+
+*   **Manejo de Tokens:**
+    *   **Firma:** Los tokens DEBEN estar firmados usando el algoritmo **HS256** (HMAC con SHA-256) o superior.
+    *   **Expiración:** Todo token generado DEBE tener un tiempo de expiración definido (configurado vía `application.properties`).
+    *   **Claims:** Los tokens DEBEN incluir los roles del usuario en un claim llamado `roles`. NO DEBE incluirse información sensible (passwords, datos personales privados) dentro del payload del JWT.
+
+*   **Seguridad en Endpoints:**
+    *   **Públicos:** Solo los endpoints de autenticación (`/api/auth/**`) y documentación (`/swagger-ui/**`, `/v3/api-docs/**`) DEBEN ser públicos.
+    *   **Protegidos:** El resto de los endpoints de la API DEBEN requerir autenticación por defecto.
+    *   **Autorización:** Se DEBE utilizar la validación de roles basada en claims para restringir el acceso a recursos específicos según el perfil del usuario.
+
+*   **Integración Técnica:**
+    *   **Filtros:** La validación del token DEBE realizarse mediante un filtro que extienda de `OncePerRequestFilter` (ej. `JwtTokenValidator`), inyectado antes del filtro de autenticación estándar de Spring Security.
+    *   **Validación Estricta:** Se DEBE validar la integridad, firma y expiración del token en cada request antes de establecer el contexto de seguridad.
+    *   **Errores:** El manejo de errores de autenticación y autorización (401 Unauthorized, 403 Forbidden) DEBE estar centralizado y retornar una respuesta consistente con el `ErrorDtoSalida`.
+
+*   **Gestión de Roles:**
+    *   **Entidad Estándar:** Se DEBE utilizar `RolEntity` y la enumeración `RolNombre` para la definición y asignación de permisos.
+    *   **Prefijos:** Los roles en el contexto de seguridad de Spring DEBEN mantener el prefijo `ROLE_` (ej. `ROLE_ADMIN`, `ROLE_USER`).

@@ -37,6 +37,12 @@ Editar el archivo `.env` con tus credenciales reales:
 SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/tablero_db?useSSL=false&serverTimezone=UTC
 SPRING_DATASOURCE_USERNAME=tu_usuario
 SPRING_DATASOURCE_PASSWORD=tu_contraseña
+
+# Configuración JWT
+JWT_USER_SECRET=tu_secreto_para_usuarios_en_base64
+JWT_USER_EXPIRATION=3600000 # 1 hora
+JWT_CLIENT_SECRET=tu_secreto_para_clientes_en_base64
+JWT_CLIENT_EXPIRATION=86400000 # 24 horas
 ```
 
 > **Importante:** El archivo `.env` está en `.gitignore` y **nunca** debe subirse al repositorio.

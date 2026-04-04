@@ -6,9 +6,37 @@ Todas las respuestas de error siguen la estructura [`ErrorDtoSalida`](error-hand
 
 ---
 
+## Autenticación (AuthControlador)
+
+**Base Path:** `/api/auth`
+
+> 🔒 **Nota de Seguridad:** Todos los endpoints protegidos requieren el encabezado `Authorization: Bearer <JWT_TOKEN>`.
+
+| Método | Ruta | Descripción | Body (Entrada) | Respuesta | Código HTTP |
+|--------|------|-------------|-----------------|-----------|-------------|
+| `POST` | `/login` | Iniciar sesión y obtener token JWT | `LoginRequest` | `JwtResponse` | `200 OK` |
+
+### LoginRequest (JSON)
+```json
+{
+  "correo": "usuario@email.com",
+  "contraseña": "password123"
+}
+```
+
+### JwtResponse (JSON)
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiJ9...",
+  "tipoToken": "Bearer"
+}
+```
+
+---
+
 ## PerfilControlador
 
-**Base Path:** `/perfil`
+**Base Path:** `/api/perfil`
 
 | Método | Ruta | Descripción | Body (Entrada) | Respuesta | Código HTTP |
 |--------|------|-------------|-----------------|-----------|-------------|
@@ -31,7 +59,7 @@ Todas las respuestas de error siguen la estructura [`ErrorDtoSalida`](error-hand
 
 ## ProyectoControlador
 
-**Base Path:** `/proyectos`
+**Base Path:** `/api/proyectos`
 
 | Método | Ruta | Descripción | Body (Entrada) | Respuesta | Código HTTP |
 |--------|------|-------------|-----------------|-----------|-------------|
@@ -56,7 +84,7 @@ Todas las respuestas de error siguen la estructura [`ErrorDtoSalida`](error-hand
 
 ## TareaControlador
 
-**Base Path:** `/tarea`
+**Base Path:** `/api/tarea`
 
 | Método | Ruta | Descripción | Body (Entrada) | Respuesta | Código HTTP |
 |--------|------|-------------|-----------------|-----------|-------------|
@@ -82,15 +110,15 @@ Todas las respuestas de error siguen la estructura [`ErrorDtoSalida`](error-hand
 
 ## EntregableControlador
 
-**Base Path:** `/entregable`
+**Base Path:** `/api/entregable`
 
 > ⚠️ **Nota:** Este controlador usa `@ModelAttribute` (multipart/form-data) en lugar de `@RequestBody` (JSON) para soportar la subida de archivos.
 
 | Método | Ruta | Descripción | Body (Entrada) | Respuesta | Código HTTP |
 |--------|------|-------------|-----------------|-----------|-------------|
-| `POST` | `/entregable` | Crear un nuevo entregable | `EntregableDtoEntrada` (form-data) | `EntregablesEntity` | `201 Created` |
+| `POST` | `/entregable` | Crear un nuevo entregable | `EntregableDtoEntrada` (form-data) | `EntregableDtoSalida` | `201 Created` |
 | `GET` | `/entregable` | Listar todos los entregables | - | `List<EntregableDtoSalida>` | `200 OK` |
-| `PUT` | `/entregable/{id}` | Actualizar entregable | `EntregableDtoEntrada` (form-data) | `EntregablesEntity` | `200 OK` |
+| `PUT` | `/entregable/{id}` | Actualizar entregable | `EntregableDtoEntrada` (form-data) | `EntregableDtoSalida` | `200 OK` |
 | `DELETE` | `/entregable/{id}` | Eliminar entregable | - | Vacío | `204 No Content` |
 
 ### EntregableDtoEntrada (form-data)
@@ -105,7 +133,7 @@ recurso: "URL o nombre del recurso"
 
 ## AprovacionController
 
-**Base Path:** `/aprovaciones`
+**Base Path:** `/api/aprovaciones`
 
 | Método | Ruta | Descripción | Body (Entrada) | Respuesta | Código HTTP |
 |--------|------|-------------|-----------------|-----------|-------------|
@@ -142,7 +170,7 @@ Todas las respuestas de error devuelven el formato `ErrorDtoSalida`:
   "timestamp": "2026-03-22T22:00:00",
   "estado": 404,
   "mensaje": "El proyecto no fue encontrado",
-  "detalles": "uri=/proyectos/uuid-invalido"
+  "detalles": "uri=/api/proyectos/uuid-invalido"
 }
 ```
 

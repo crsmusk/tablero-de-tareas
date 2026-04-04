@@ -15,16 +15,22 @@
 ```mermaid
 erDiagram
     Perfiles ||--o{ Proyectos : "perfilAsociado"
+    Perfiles }o--o{ Roles : "perfiles_roles"
     Proyectos ||--o{ Tareas : "proyectoAsociado"
     Tareas ||--o{ Entregables : "tareaAsociada"
-    Tareas ||--o{ Aprovaciones : "tarea_id (JoinColumn)"
+    Tareas ||--o{ Aprovaciones : "tarea_id"
 
     Perfiles {
         UUID id PK
-        VARCHAR correo "NOT BLANK, @Email"
-        VARCHAR contrasena "NOT BLANK"
+        VARCHAR correo
+        VARCHAR contrasena
         VARCHAR nombre
         VARCHAR nick_name
+    }
+
+    Roles {
+        UUID id PK
+        VARCHAR rol_nombre "ENUM: ROLE_USER, ROLE_ADMIN, ROLE_CLIENT_VIEWER"
     }
 
     Proyectos {
@@ -33,31 +39,16 @@ erDiagram
         VARCHAR nombre_cliente
         VARCHAR correo_cliente
         VARCHAR acceso
-        VARCHAR estado "ENUM: ACTIVO, PAUSADO, COMPLETADO, ARCHIVADO"
+        VARCHAR estado
     }
 
     Tareas {
         UUID id PK
-        VARCHAR titulo "NOT BLANK"
+        VARCHAR titulo
         VARCHAR descripcion
         INT posicion
-        VARCHAR estado "ENUM: PENDIENTE, EN_PROGRESO, EN_REVISION, COMPLETADO"
+        VARCHAR estado
         VARCHAR cliente_accion
-    }
-
-    Entregables {
-        UUID id PK
-        VARCHAR Recurso
-        VARCHAR tipo_entregrable "ENUM: ARCHIVO, ENLACE"
-        VARCHAR nombreArchivo
-        VARCHAR ruta "max 1000 chars"
-    }
-
-    Aprovaciones {
-        UUID id PK
-        VARCHAR estado_aprovacion "ENUM: APROVADO, CAMBIOS_SOLICITADOS, RECHAZADA"
-        VARCHAR comentario
-        DATE fecha
     }
 ```
 
@@ -67,96 +58,97 @@ erDiagram
 
 | Campo | Tipo Java | Columna DB | Restricciones |
 |-------|-----------|------------|---------------|
-| `id` | `UUID` | `id` | PK, auto-generado |
-| `correo` | `String` | `correo` | `@NotBlank`, `@Email` |
-| `contraseña` | `String` | `contraseña` | `@NotBlank` |
+| `id` | `UUID` | `id` | PK |
+| `correo` | `String` | `correo` | Unique, Not Blank |
+| `contraseña` | `String` | `contraseña` | Not Blank (Bcrypt) |
 | `nombre` | `String` | `nombre` | - |
 | `nickName` | `String` | `nick_name` | - |
+| `roles` | `Set<RolEntity>` | - | `@ManyToMany` |
 | `proyectos` | `List<ProyectoEntity>` | - | `@OneToMany` |
+
+### RolEntity → Tabla `roles`
+
+| Campo | Tipo Java | Columna DB | Restricciones |
+|-------|-----------|------------|---------------|
+| `id` | `UUID` | `id` | PK |
+| `rolNombre` | `RolNombre` | `rol_nombre` | Unique, Not Null |
 
 ### ProyectoEntity → Tabla `Proyectos`
 
 | Campo | Tipo Java | Columna DB | Restricciones |
 |-------|-----------|------------|---------------|
-| `id` | `UUID` | `id` | PK, auto-generado |
+| `id` | `UUID` | `id` | PK |
 | `nombreProyecto` | `String` | `nombre_proyecto` | - |
 | `nombreCliente` | `String` | `nombre_cliente` | - |
 | `correoCliente` | `String` | `correo_cliente` | - |
 | `acceso` | `String` | `acceso` | - |
-| `estado` | `EstadosProyecto` | `estado` | Default: `ACTIVO` |
-| `tareas` | `List<TareaEntity>` | - | `@OneToMany(orphanRemoval=true)` |
+| `estado` | `EstadosProyecto` | `estado` | - |
 | `perfilAsociado` | `PerfilEntity` | FK | `@ManyToOne` |
 
 ### TareaEntity → Tabla `Tareas`
 
 | Campo | Tipo Java | Columna DB | Restricciones |
 |-------|-----------|------------|---------------|
-| `id` | `UUID` | `id` | PK, auto-generado |
-| `titulo` | `String` | `titulo` | `@NotBlank` |
+| `id` | `UUID` | `id` | PK |
+| `titulo` | `String` | `titulo` | Not Blank |
 | `descripcion` | `String` | `descripcion` | - |
-| `posicion` | `int` | `posicion` | Orden de la tarea |
-| `estado` | `EstadosTarea` | `estado` | Default: `PENDIENTE` |
-| `clienteAccion` | `String` | `cliente_accion` | - |
-| `recursos` | `List<EntregablesEntity>` | - | `@OneToMany(cascade=ALL, orphanRemoval=true)`, max 4 |
-| `aprovaciones` | `List<AprovacionEntity>` | - | `@OneToMany(cascade=ALL, orphanRemoval=true)` vía `@JoinColumn` |
+| `posicion` | `int` | `posicion` | - |
+| `estado` | `EstadosTarea` | `estado` | - |
 | `proyectoAsociado` | `ProyectoEntity` | FK | `@ManyToOne` |
 
 ### EntregablesEntity → Tabla `Entregables`
 
 | Campo | Tipo Java | Columna DB | Restricciones |
 |-------|-----------|------------|---------------|
-| `id` | `UUID` | `id` | PK, auto-generado |
+| `id` | `UUID` | `id` | PK |
 | `Recurso` | `String` | `Recurso` | - |
-| `tipoEntregable` | `TipoEntregable` | `tipo_entregrable` | Enum STRING |
-| `nombreArchivo` | `String` | `nombreArchivo` | - |
-| `ruta` | `String` | `ruta` | `@Column(length=1000)` |
-| `tareaAsociada` | `TareaEntity` | FK | `@ManyToOne` |
+| `tipoEntregable` | `TipoEntregable` | `tipo_entregrable` | - |
+| `ruta` | `String` | `ruta` | - |
 
 ### AprovacionEntity → Tabla `Aprovaciones`
 
 | Campo | Tipo Java | Columna DB | Restricciones |
 |-------|-----------|------------|---------------|
-| `id` | `UUID` | `id` | PK, auto-generado |
-| `estadoAprovacion` | `EstadoAprovado` | `estado_aprovacion` | Enum STRING |
+| `id` | `UUID` | `id` | PK |
+| `estadoAprovacion` | `EstadoAprovado` | `estado_aprovacion` | - |
 | `comentario` | `String` | `comentario` | - |
 | `fecha` | `LocalDate` | `fecha` | - |
 
 ## Enumeraciones
 
+### RolNombre
+| Valor | Descripción |
+|-------|-------------|
+| `ROLE_USER` | Usuario estándar con acceso a sus proyectos |
+| `ROLE_ADMIN` | Administrador con acceso total |
+| `ROLE_CLIENT_VIEWER` | Cliente con acceso solo lectura a sus entregables |
+
 ### EstadosTarea
 | Valor | Descripción |
 |-------|-------------|
-| `PENDIENTE` | Tarea creada, sin iniciar |
-| `EN_PROGRESO` | Tarea en desarrollo activo |
-| `EN_REVISION` | Tarea esperando revisión del cliente |
-| `COMPLETADO` | Tarea finalizada |
+| `PENDIENTE`, `EN_PROGRESO`, `EN_REVISION`, `COMPLETADO` | Ciclo de vida de la tarea |
 
 ### EstadosProyecto
 | Valor | Descripción |
 |-------|-------------|
-| `ACTIVO` | Proyecto en curso (default) |
-| `PAUSADO` | Proyecto temporalmente detenido |
-| `COMPLETADO` | Proyecto finalizado |
-| `ARCHIVADO` | Proyecto archivado para histórico |
+| `ACTIVO`, `PAUSADO`, `COMPLETADO`, `ARCHIVADO` | Ciclo de vida del proyecto |
 
 ### TipoEntregable
 | Valor | Descripción |
 |-------|-------------|
-| `ARCHIVO` | Entregable subido como archivo físico |
-| `ENLACE` | Entregable como URL externa |
+| `ARCHIVO`, `ENLACE` | Naturaleza del entregable |
 
 ### EstadoAprovado
 | Valor | Descripción |
 |-------|-------------|
-| `APROVADO` | El cliente aprobó el entregable |
-| `CAMBIOS_SOLICITADOS` | El cliente solicita modificaciones |
-| `RECHAZADA` | El cliente rechazó el entregable |
+| `APROVADO`, `CAMBIOS_SOLICITADOS`, `RECHAZADA` | Veredicto del cliente |
 
 ## Relaciones Clave
 
-| Relación | Tipo | Cascade | OrphanRemoval |
-|----------|------|---------|---------------|
-| Perfil → Proyectos | `@OneToMany` | No | No |
-| Proyecto → Tareas | `@OneToMany(mappedBy)` | No | Sí |
-| Tarea → Entregables | `@OneToMany(mappedBy, cascade=ALL)` | ALL | Sí |
-| Tarea → Aprobaciones | `@OneToMany(@JoinColumn, cascade=ALL)` | ALL | Sí |
+| Relación | Tipo | Descripción |
+|----------|------|-------------|
+| Perfil ↔ Roles | `@ManyToMany` | Tabla intermedia `perfiles_roles` |
+| Perfil → Proyectos | `@OneToMany` | Un perfil puede tener muchos proyectos |
+| Proyecto → Tareas | `@OneToMany` | Un proyecto contiene múltiples tareas |
+| Tarea → Entregables | `@OneToMany` | Una tarea tiene hasta 4 entregables |
+| Tarea → Aprobaciones | `@OneToMany` | Una tarea registra su histórico de veredictos |
