@@ -8,13 +8,16 @@ El proyecto implementa un **manejo de errores centralizado** mediante el patrón
 graph LR
     S["Servicio"] -->|Lanza| TE["TableroExcepcion"]
     V["Validación @Valid"] -->|Lanza| MAV["MethodArgumentNotValidException"]
+    SEC["Seguridad (JWT)"] -->|Falla| JW["Filtro / EntryPoint"]
     X["Error Inesperado"] -->|Lanza| EX["Exception"]
     
     TE --> MG["ManejadorGlobalExcepciones\n@RestControllerAdvice"]
     MAV --> MG
+    JW --> MGSEC["Manejadores de Seguridad\n(EntryPoint/AccessDenied)"]
     EX --> MG
     
     MG -->|Responde| ER["ErrorDtoSalida (JSON)"]
+    MGSEC -->|Responde| ER
 ```
 
 ## Componentes
@@ -38,7 +41,9 @@ throw new TableroExcepcion(
 | `mensaje` | `String` | Heredado de `RuntimeException.getMessage()` |
 | `estadoHttp` | `HttpStatus` | Código HTTP que se devolverá al cliente |
 
-### 2. ManejadorGlobalExcepciones
+### 2. Manejadores de Excepciones
+
+#### ManejadorGlobalExcepciones
 
 **Ubicación:** `excepciones/handler/ManejadorGlobalExcepciones.java`
 
@@ -46,9 +51,18 @@ Clase anotada con `@RestControllerAdvice` que intercepta excepciones de forma gl
 
 | Método | Excepción que Atrapa | Código HTTP | Cuándo se Activa |
 |--------|----------------------|-------------|-------------------|
-| `manejarTableroExcepcion` | `TableroExcepcion` | Dinámico (lo define la excepción) | Errores de lógica de negocio |
+| `manejarTableroExcepcion` | `TableroExcepcion` | Dinámico | Errores de lógica de negocio |
 | `manejarValidaciones` | `MethodArgumentNotValidException` | `400 Bad Request` | Fallos de `@Valid` en DTOs |
 | `manejarExcepcionesGlobales` | `Exception` | `500 Internal Server Error` | Cualquier error no controlado |
+
+#### Manejadores de Seguridad (Security Handlers)
+
+**Ubicación:** `seguridad/`
+
+| Clase | Código HTTP | Propósito |
+|-------|-------------|-----------|
+| `JwtAuthenticationEntryPoint` | `401 Unauthorized` | Se activa cuando el usuario no está autenticado o el token es inválido. |
+| `JwtAccessDeniedHandler` | `403 Forbidden` | Se activa cuando el usuario está autenticado pero no tiene los roles necesarios. |
 
 ### 3. ErrorDtoSalida
 
