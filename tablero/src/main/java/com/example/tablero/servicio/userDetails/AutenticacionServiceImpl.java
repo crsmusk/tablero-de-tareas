@@ -1,4 +1,4 @@
-package com.example.tablero.servicio.impl;
+package com.example.tablero.servicio.userDetails;
 
 import com.example.tablero.entidades.dtos.entrada.LoginRequest;
 import com.example.tablero.entidades.dtos.salida.JwtResponse;
@@ -10,9 +10,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-/**
- * Implementación del servicio de autenticación.
- */
 @Service
 public class AutenticacionServiceImpl implements AutenticacionI {
 
@@ -26,17 +23,13 @@ public class AutenticacionServiceImpl implements AutenticacionI {
 
     @Override
     public JwtResponse login(LoginRequest request) {
-        // 1. Intentar autenticar con Spring Security
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.correo(), request.contraseña()));
 
-        // 2. Si es exitoso, obtener los detalles del usuario
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-        // 3. Generar el token
         String token = jwtUtiles.generarToken(userDetails);
 
-        // 4. Retornar la respuesta
         return new JwtResponse(token);
     }
 }

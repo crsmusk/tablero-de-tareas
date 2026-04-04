@@ -13,9 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * Controlador para gestionar la autenticación de usuarios.
- */
 @RestController
 @RequestMapping("/api/auth")
 @Tag(name = "Autenticación", description = "Endpoints para inicio de sesión y gestión de tokens")

@@ -15,10 +15,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.time.LocalDateTime;
 
-/**
- * Manejador que se activa cuando un usuario autenticado no tiene los permisos
- * suficientes para acceder a un recurso. Retorna un error 403 (Forbidden).
- */
 @Component
 public class JwtAccessDeniedHandler implements AccessDeniedHandler {
 
