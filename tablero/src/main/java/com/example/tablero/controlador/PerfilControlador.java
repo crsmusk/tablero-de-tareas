@@ -3,7 +3,6 @@ package com.example.tablero.controlador;
 import com.example.tablero.entidades.dtos.entrada.PerfilDtoEntrada;
 import com.example.tablero.entidades.dtos.salida.PerfilDtoSalida;
 import com.example.tablero.servicio.interfaces.PerfilI;
-import org.springframework.security.access.prepost.PreAuthorize;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -12,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -39,19 +39,18 @@ public class PerfilControlador {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/buscarPerfil")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Buscar perfil por ID", description = "Obtiene los detalles de un perfil por su UUID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Perfil recuperado correctamente"),
             @ApiResponse(responseCode = "404", description = "Perfil no encontrado")
     })
-    public ResponseEntity<PerfilDtoSalida> buscarPerfil(
-            @Parameter(description = "UUID del perfil") @PathVariable UUID id) {
-        return ResponseEntity.ok(perfilS.buscarPerfil(id));
+    public ResponseEntity<PerfilDtoSalida> buscarPerfil() {
+        return ResponseEntity.ok(perfilS.buscarPerfil());
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/actualizarPerfil")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Actualizar perfil", description = "Modifica los datos de un perfil existente")
     @ApiResponses(value = {
@@ -59,9 +58,8 @@ public class PerfilControlador {
             @ApiResponse(responseCode = "404", description = "Perfil no encontrado")
     })
     public ResponseEntity<Void> actualizarPerfil(
-            @Parameter(description = "UUID del perfil a actualizar") @PathVariable UUID id,
             @Parameter(description = "Nuevos datos del perfil") @RequestBody @Valid PerfilDtoEntrada perfilDto) {
-        perfilS.actualizarPerfil(id, perfilDto);
+        perfilS.actualizarPerfil(perfilDto);
         return ResponseEntity.ok().build();
     }
 
