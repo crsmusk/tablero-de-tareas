@@ -18,6 +18,4 @@ public class ProyectoDtoEntrada {
     private String nombreCliente;
     @Email(message = "El formato del correo del cliente no es válido")
     private String correoCliente;
-    @NotBlank(message = "El ID del perfil es obligatorio")
-    private String idPerfil;
 }

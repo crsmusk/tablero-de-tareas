@@ -10,8 +10,11 @@ import com.example.tablero.repositorio.PerfilRepositorio;
 import com.example.tablero.repositorio.ProyectoRepositorio;
 import com.example.tablero.servicio.interfaces.ProyectoI;
 import com.example.tablero.excepciones.excepcion.TableroExcepcion;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,13 +36,13 @@ public class ProyectoServiceImpl implements ProyectoI {
 
     @Override
     public String guardarProyecto(ProyectoDtoEntrada proyectoDto) {
-        if (proyectoDto.getIdPerfil() == null
-                || !perfilRepositorio.existsById(UUID.fromString(proyectoDto.getIdPerfil()))) {
-            throw new TableroExcepcion("no se encontro al usuario con el id " + proyectoDto.getIdPerfil(),
+        UUID userId = (UUID) SecurityContextHolder.getContext().getAuthentication().getCredentials();
+        if (!perfilRepositorio.existsById(userId)) {
+            throw new TableroExcepcion("no se encontro al usuario con el id " + userId,
                     HttpStatus.NOT_FOUND);
         }
         PerfilEntity usuario = new PerfilEntity();
-        usuario.setId(UUID.fromString(proyectoDto.getIdPerfil()));
+        usuario.setId(userId);
         ProyectoEntity proyecto = new ProyectoEntity();
         proyecto.setNombreProyecto(proyectoDto.getNombreProyecto());
         proyecto.setCorreoCliente(proyectoDto.getCorreoCliente());
@@ -51,7 +54,8 @@ public class ProyectoServiceImpl implements ProyectoI {
 
     @Override
     public List<ProyectoResumidoDtoSalida> listaProyectos() {
-        return mapper.ProyectosResumidoM(repositorio.findAll());
+        UUID id = (UUID) SecurityContextHolder.getContext().getAuthentication().getCredentials();
+        return mapper.ProyectosResumidoM(repositorio.findByUsuarioId(id));
     }
 
     @Override
