@@ -13,5 +13,5 @@ public interface EntregableI {
 
     void actualizarRecurso(UUID id, EntregableDtoEntrada entregableDto);
 
-    List<EntregableDtoSalida> listarEntregables();
+    List<EntregableDtoSalida> listarEntregables(String idTarea);
 }

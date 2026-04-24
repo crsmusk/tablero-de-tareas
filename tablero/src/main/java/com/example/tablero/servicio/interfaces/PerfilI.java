@@ -7,7 +7,10 @@ import java.util.UUID;
 
 public interface PerfilI {
     public void guardarPerfil(PerfilDtoEntrada perfilDto);
-    public PerfilDtoSalida buscarPerfil(UUID id);
+
+    public PerfilDtoSalida buscarPerfil();
+
     public void eliminarPerfil(UUID id);
-    public void actualizarPerfil(UUID id,PerfilDtoEntrada perfilDto);
+
+    public void actualizarPerfil(PerfilDtoEntrada perfilDto);
 }

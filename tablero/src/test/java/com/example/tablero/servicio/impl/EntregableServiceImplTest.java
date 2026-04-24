@@ -283,21 +283,22 @@ class EntregableServiceImplTest {
     }
 
     @Test
-    void debeListarTodosLosEntregables() {
+    void debeListarEntregablesPorTarea() {
         // Given
+        UUID tareaId = UUID.randomUUID();
         List<EntregablesEntity> entities = List.of(new EntregablesEntity());
         List<EntregableDtoSalida> dtos = List.of(EntregableDtoSalida.builder().build());
 
-        when(repositorio.findAll()).thenReturn(entities);
+        when(repositorio.findByTareaAsociadaId(tareaId)).thenReturn(entities);
         when(mapper.toDtoList(entities)).thenReturn(dtos);
 
         // When
-        List<EntregableDtoSalida> resultado = service.listarEntregables();
+        List<EntregableDtoSalida> resultado = service.listarEntregables(tareaId.toString());
 
         // Then
         assertNotNull(resultado);
         assertEquals(1, resultado.size());
-        verify(repositorio).findAll();
+        verify(repositorio).findByTareaAsociadaId(tareaId);
         verify(mapper).toDtoList(entities);
     }
 }

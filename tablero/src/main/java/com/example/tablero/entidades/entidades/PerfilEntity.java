@@ -36,7 +36,7 @@ public class PerfilEntity {
     @EqualsAndHashCode.Exclude
     private List<ProyectoEntity> proyectos;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinTable(name = "perfiles_roles", joinColumns = @JoinColumn(name = "perfil_id"), inverseJoinColumns = @JoinColumn(name = "rol_id"))
     @ToString.Exclude
     @EqualsAndHashCode.Exclude

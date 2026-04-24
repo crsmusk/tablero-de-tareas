@@ -18,6 +18,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 @Component
 public class JwtTokenValidator extends OncePerRequestFilter {
@@ -51,7 +52,8 @@ public class JwtTokenValidator extends OncePerRequestFilter {
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(correoUsuario);
 
                 if (jwtUtiles.esTokenValido(jwt, userDetails)) {
-                    iniciarSesionEnContexto(request, userDetails, userDetails.getAuthorities());
+                    UUID userId = jwtUtiles.extraerUserId(jwt);
+                    iniciarSesionEnContexto(request, userDetails, userDetails.getAuthorities(), userId);
                 }
             }
         } catch (Exception e) {
@@ -70,7 +72,7 @@ public class JwtTokenValidator extends OncePerRequestFilter {
                                 .authorities(restriccionCliente)
                                 .build();
 
-                        iniciarSesionEnContexto(request, clienteDetails, restriccionCliente);
+                        iniciarSesionEnContexto(request, clienteDetails, restriccionCliente, null);
                     }
                 }
             } catch (Exception ex) {
@@ -81,10 +83,10 @@ public class JwtTokenValidator extends OncePerRequestFilter {
     }
 
     private void iniciarSesionEnContexto(HttpServletRequest request, UserDetails userDetails,
-            Collection<? extends GrantedAuthority> authorities) {
+            Collection<? extends GrantedAuthority> authorities, UUID userId) {
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                 userDetails,
-                null,
+                userId,
                 authorities);
         authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authToken);

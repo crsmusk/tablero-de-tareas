@@ -46,8 +46,9 @@ public class EntregableControlador {
     @PreAuthorize("hasAnyRole('ADMIN', 'USER', 'CLIENT_VIEWER')")
     @Operation(summary = "Listar todos los entregables", description = "Devuelve una lista con todos los entregables registrados")
     @ApiResponse(responseCode = "200", description = "Listado recuperado correctamente")
-    public ResponseEntity<List<EntregableDtoSalida>> listarEntregables() {
-        return ResponseEntity.ok(entregableS.listarEntregables());
+    public ResponseEntity<List<EntregableDtoSalida>> listarEntregables(
+            @Parameter(description = "UUID de la tarea") @RequestParam String idTarea) {
+        return ResponseEntity.ok(entregableS.listarEntregables(idTarea));
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

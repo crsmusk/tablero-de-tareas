@@ -173,15 +173,17 @@ class TareaServiceImplTest {
     @Test
     void debeListarTareas() {
         // Given
+        UUID idProyecto = UUID.randomUUID();
         List<TareaEntity> entities = Collections.singletonList(new TareaEntity());
-        when(repositorio.findAll()).thenReturn(entities);
+        when(repositorio.findByTareasProyecto(idProyecto)).thenReturn(entities);
         when(mapper.tareasM(entities)).thenReturn(Collections.singletonList(new TareaDtoSalida()));
 
         // When
-        List<TareaDtoSalida> resultado = service.listarTarea();
+        List<TareaDtoSalida> resultado = service.listarTarea(idProyecto);
 
         // Then
         assertFalse(resultado.isEmpty());
+        verify(repositorio).findByTareasProyecto(idProyecto);
     }
 
     @Test

@@ -8,12 +8,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.example.tablero.entidades.dtos.entrada.ProyectoDtoEntrada;
 import com.example.tablero.entidades.dtos.salida.ProyectoDtoSalida;
@@ -39,13 +42,21 @@ class ProyectoServiceImplTest {
     @InjectMocks
     private ProyectoServiceImpl service;
 
+    @AfterEach
+    void tearDown() {
+        SecurityContextHolder.clearContext();
+    }
+
     @Test
     void debeGuardarProyectoExitosamente() {
         // Given
         UUID perfilId = UUID.randomUUID();
+
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken("usuario@example.com", perfilId, List.of()));
+
         ProyectoDtoEntrada dto = ProyectoDtoEntrada.builder()
                 .nombreProyecto("Nuevo Proyecto")
-                .idPerfil(perfilId.toString())
                 .build();
 
         when(perfilRepositorio.existsById(perfilId)).thenReturn(true);
@@ -62,8 +73,11 @@ class ProyectoServiceImplTest {
     void debeLanzarExcepcionCuandoPerfilNoExiste() {
         // Given
         UUID perfilId = UUID.randomUUID();
+
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken("usuario@example.com", perfilId, List.of()));
+
         ProyectoDtoEntrada dto = ProyectoDtoEntrada.builder()
-                .idPerfil(perfilId.toString())
                 .build();
 
         when(perfilRepositorio.existsById(perfilId)).thenReturn(false);
@@ -75,12 +89,17 @@ class ProyectoServiceImplTest {
     }
 
     @Test
-    void debeListarTodosLosProyectos() {
+    void debeListarProyectosDelUsuarioAutenticado() {
         // Given
+        UUID userId = UUID.randomUUID();
+
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken("usuario@example.com", userId, List.of()));
+
         List<ProyectoEntity> entities = List.of(new ProyectoEntity());
         List<ProyectoResumidoDtoSalida> dtos = List.of(ProyectoResumidoDtoSalida.builder().build());
 
-        when(repositorio.findAll()).thenReturn(entities);
+        when(repositorio.findByUsuarioId(userId)).thenReturn(entities);
         when(mapper.ProyectosResumidoM(entities)).thenReturn(dtos);
 
         // When
@@ -89,7 +108,7 @@ class ProyectoServiceImplTest {
         // Then
         assertNotNull(resultado);
         assertFalse(resultado.isEmpty());
-        verify(repositorio).findAll();
+        verify(repositorio).findByUsuarioId(userId);
         verify(mapper).ProyectosResumidoM(entities);
     }
 

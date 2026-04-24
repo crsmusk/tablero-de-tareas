@@ -13,6 +13,7 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -34,11 +35,19 @@ public class JwtUtiles {
     // --- JWT PARA USUARIOS NORMALES ---
 
     public String generarToken(UserDetails userDetails) {
+        return generarToken(userDetails, null);
+    }
+
+    public String generarToken(UserDetails userDetails, UUID userId) {
         Map<String, Object> extraClaims = new HashMap<>();
         String roles = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
         extraClaims.put("roles", roles);
+
+        if (userId != null) {
+            extraClaims.put("userId", userId.toString());
+        }
 
         return construirToken(extraClaims, userDetails.getUsername(), userJwtExpiration, obtenerLlave(userSecretKey));
     }
@@ -52,7 +61,12 @@ public class JwtUtiles {
         return extraerCorreo(token, userSecretKey);
     }
 
-    // --- JWT PARA CLIENTES (ENLACES TEMPORALES RESTRINGIDOS) ---
+    public UUID extraerUserId(String token) {
+        String userIdStr = extraerClaim(token, claims -> claims.get("userId", String.class), userSecretKey);
+        return userIdStr != null ? UUID.fromString(userIdStr) : null;
+    }
+
+    // JWT PARA CLIENTES (ENLACES TEMPORALES RESTRINGIDOS)
 
     public String generarTokenCliente(String identificadorPeticion) {
         Map<String, Object> extraClaims = new HashMap<>();
