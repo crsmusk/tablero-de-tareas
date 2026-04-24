@@ -6,6 +6,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +28,7 @@ public class PersonaDetailServiceImpl implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException(
                         "Acceso denegado. No se encontró cuenta con el correo: " + correo));
 
-        return org.springframework.security.core.userdetails.User.builder()
+        return User.builder()
                 .username(perfil.getCorreo())
                 .password(perfil.getContraseña())
                 .authorities(perfil.getRoles().stream()
