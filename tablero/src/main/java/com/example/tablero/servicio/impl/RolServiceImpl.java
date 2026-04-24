@@ -5,6 +5,9 @@ import com.example.tablero.entidades.entidades.enums.RolNombre;
 import com.example.tablero.excepciones.excepcion.TableroExcepcion;
 import com.example.tablero.repositorio.RolRepositorio;
 import com.example.tablero.servicio.interfaces.RolI;
+
+import java.util.Optional;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +22,12 @@ public class RolServiceImpl implements RolI {
 
     @Override
     public RolEntity buscarPorNombre(RolNombre rolNombre) {
-        return rolRepositorio.findByRolNombre(rolNombre)
-                .orElseThrow(() -> new TableroExcepcion("El rol especificado no existe en el sistema: " + rolNombre,
-                        HttpStatus.NOT_FOUND));
+        Optional<RolEntity> rol = rolRepositorio.findByRolNombre(rolNombre);
+        if (rol.isEmpty()) {
+            RolEntity rolEntity = new RolEntity();
+            rolEntity.setRolNombre(rolNombre);
+            return rolEntity;
+        }
+        return rol.get();
     }
 }
