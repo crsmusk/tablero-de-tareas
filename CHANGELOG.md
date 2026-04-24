@@ -1,5 +1,28 @@
 # Changelog
 
+## [1.2.0](https://github.com/crsmusk/tablero-de-tareas/compare/v1.1.0...v1.2.0) (2026-04-24)
+
+
+### Features
+
+* implement granular authorization, stakeholder behavioral modeli… ([80a2eff](https://github.com/crsmusk/tablero-de-tareas/commit/80a2eff1ebf4b2de7dcad403569111cd7cc69a58))
+* implement granular authorization, stakeholder behavioral modeling, and technical auditing. Updated documentation in /docs and enabled public profile registration. ([fb9df31](https://github.com/crsmusk/tablero-de-tareas/commit/fb9df31c9a9d053c6c43367b45f074e1c526a373))
+* implement JWT-based authentication and role management system ([0b3e833](https://github.com/crsmusk/tablero-de-tareas/commit/0b3e833503d42d49a5f116c7c448a914e989a0b5))
+* Implementar el flujo de autenticación JWT, los manejadores de seguridad personalizados y el DTO de aprobación. ([ff73541](https://github.com/crsmusk/tablero-de-tareas/commit/ff73541b0191ae74df4ca6b5f09b806306a52dca))
+* **security:** embed userId in JWT claims and extract it into SecurityContext ([ad14f06](https://github.com/crsmusk/tablero-de-tareas/commit/ad14f06af2ac501b9801b5a5a7d3cb85eddeff9f))
+* **tasks:** filter tasks by project and deliverables by task, and add task summary endpoint ([e3699fc](https://github.com/crsmusk/tablero-de-tareas/commit/e3699fcc012ab56f2df9a020e0f086ba380f729a))
+
+
+### Bug Fixes
+
+* **role:** handle missing roles by returning a new entity instead of throwing exception ([ff09050](https://github.com/crsmusk/tablero-de-tareas/commit/ff090501410bf4711521d52134bf5cec062b194b))
+
+
+### Documentation
+
+* actualizar documentación y estándares de seguridad JWT ([7cc3b63](https://github.com/crsmusk/tablero-de-tareas/commit/7cc3b635c917c24b3079e69d90daa08ef2df81a0))
+* actualizar documentación y estándares de seguridad JWT ([a066d9f](https://github.com/crsmusk/tablero-de-tareas/commit/a066d9f61bb5d4647ae5a5ebd50f0913e2a7687c))
+
 ## [1.1.0](https://github.com/crsmusk/tablero-de-tareas/compare/v1.0.0...v1.1.0) (2026-04-04)
 
 
