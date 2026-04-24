@@ -3,6 +3,7 @@ package com.example.tablero.servicio.impl;
 import com.example.tablero.entidades.dtos.entrada.EntregableDtoEntrada;
 import com.example.tablero.entidades.dtos.entrada.TareaDtoEntrada;
 import com.example.tablero.entidades.dtos.salida.TareaDtoSalida;
+import com.example.tablero.entidades.dtos.salida.TareaResumidaDtoSalida;
 import com.example.tablero.entidades.entidades.ProyectoEntity;
 import com.example.tablero.entidades.entidades.TareaEntity;
 import com.example.tablero.entidades.entidades.enums.EstadosTarea;
@@ -91,8 +92,13 @@ public class TareaServiceImpl implements TareaI {
     }
 
     @Override
-    public List<TareaDtoSalida> listarTarea() {
-        return mapper.tareasM(repositorio.findAll());
+    public List<TareaDtoSalida> listarTarea(UUID idProyecto) {
+        return mapper.tareasM(repositorio.findByTareasProyecto(idProyecto));
+    }
+
+    @Override
+    public List<TareaResumidaDtoSalida> listarTareaResumida(UUID idProyecto) {
+        return mapper.tareasResumidasM(repositorio.findByTareasProyecto(idProyecto));
     }
 
     @Override

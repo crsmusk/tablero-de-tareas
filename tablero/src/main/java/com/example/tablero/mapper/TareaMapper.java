@@ -3,6 +3,7 @@ package com.example.tablero.mapper;
 import com.example.tablero.entidades.dtos.salida.AprovacionesDtoSalida;
 import com.example.tablero.entidades.dtos.salida.EntregableDtoSalida;
 import com.example.tablero.entidades.dtos.salida.TareaDtoSalida;
+import com.example.tablero.entidades.dtos.salida.TareaResumidaDtoSalida;
 import com.example.tablero.entidades.entidades.AprovacionEntity;
 import com.example.tablero.entidades.entidades.EntregablesEntity;
 import com.example.tablero.entidades.entidades.TareaEntity;
@@ -50,5 +51,20 @@ public class TareaMapper {
             return List.of();
         }
         return tareas.stream().map(this::tareaM).toList();
+    }
+
+    public TareaResumidaDtoSalida tareaResumidaM(TareaEntity tarea) {
+        return TareaResumidaDtoSalida.builder()
+                .id(tarea.getId().toString())
+                .titulo(tarea.getTitulo())
+                .estado(tarea.getEstado() != null ? tarea.getEstado().toString() : null)
+                .build();
+    }
+
+    public List<TareaResumidaDtoSalida> tareasResumidasM(List<TareaEntity> tareas) {
+        if (tareas == null || tareas.isEmpty()) {
+            return List.of();
+        }
+        return tareas.stream().map(this::tareaResumidaM).toList();
     }
 }

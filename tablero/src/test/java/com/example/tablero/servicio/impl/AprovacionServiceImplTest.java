@@ -8,7 +8,7 @@ import com.example.tablero.entidades.entidades.enums.EstadoAprovado;
 import com.example.tablero.entidades.entidades.enums.EstadosTarea;
 import com.example.tablero.excepciones.excepcion.TableroExcepcion;
 import com.example.tablero.mapper.AprovacionMapper;
-import com.example.tablero.repositorio.AprovacionRepositorio;
+
 import com.example.tablero.repositorio.TareaRepositorio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,8 +30,6 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class AprovacionServiceImplTest {
 
-    @Mock
-    private AprovacionRepositorio aprovacionRepositorio;
     @Mock
     private TareaRepositorio tareaRepositorio;
     @Mock

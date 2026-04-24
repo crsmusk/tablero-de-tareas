@@ -114,8 +114,8 @@ public class EntregableServiceImpl implements EntregableI {
     }
 
     @Override
-    public List<EntregableDtoSalida> listarEntregables() {
-        return mapper.toDtoList(repositorio.findAll());
+    public List<EntregableDtoSalida> listarEntregables(String idTarea) {
+        return mapper.toDtoList(repositorio.findByTareaAsociadaId(UUID.fromString(idTarea)));
     }
 
     private TipoEntregable parsearTipo(String tipoStr) {

@@ -1,5 +1,6 @@
 package com.example.tablero.repositorio;
 
+import com.example.tablero.entidades.entidades.ProyectoEntity;
 import com.example.tablero.entidades.entidades.TareaEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -16,4 +17,8 @@ public interface TareaRepositorio extends JpaRepository<TareaEntity, UUID> {
 
     @Query("SELECT DISTINCT t FROM TareaEntity t LEFT JOIN FETCH t.recursos")
     List<TareaEntity> findAll();
+
+    @Query("SELECT DISTINCT t FROM TareaEntity t WHERE t.proyectoAsociado.id = :proyectoId")
+    List<TareaEntity> findByTareasProyecto(@Param("proyectoId") UUID proyectoId);
+
 }

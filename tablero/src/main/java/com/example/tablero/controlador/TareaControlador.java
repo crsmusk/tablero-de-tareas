@@ -2,6 +2,7 @@ package com.example.tablero.controlador;
 
 import com.example.tablero.entidades.dtos.entrada.TareaDtoEntrada;
 import com.example.tablero.entidades.dtos.salida.TareaDtoSalida;
+import com.example.tablero.entidades.dtos.salida.TareaResumidaDtoSalida;
 import com.example.tablero.servicio.interfaces.TareaI;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -58,8 +59,18 @@ public class TareaControlador {
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Listar todas las tareas", description = "Devuelve una lista con todas las tareas registradas")
     @ApiResponse(responseCode = "200", description = "Listado de tareas recuperado exitosamente")
-    public ResponseEntity<List<TareaDtoSalida>> listarTarea() {
-        return ResponseEntity.ok(tareaS.listarTarea());
+    public ResponseEntity<List<TareaDtoSalida>> listarTarea(
+            @Parameter(description = "UUID del proyecto") @RequestParam UUID idProyecto) {
+        return ResponseEntity.ok(tareaS.listarTarea(idProyecto));
+    }
+
+    @GetMapping("/resumen")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @Operation(summary = "Listar tareas resumidas", description = "Devuelve una lista con los datos ligeros de las tareas vinculadas a un proyecto")
+    @ApiResponse(responseCode = "200", description = "Listado de tareas resumidas recuperado exitosamente")
+    public ResponseEntity<List<TareaResumidaDtoSalida>> listarTareaResumida(
+            @Parameter(description = "UUID del proyecto") @RequestParam UUID idProyecto) {
+        return ResponseEntity.ok(tareaS.listarTareaResumida(idProyecto));
     }
 
     @GetMapping("/buscar")
