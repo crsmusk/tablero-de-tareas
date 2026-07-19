@@ -24,7 +24,7 @@
 
 *Un perfil representa a un gestor de proyectos dentro del sistema.*
 
-- ✅ Crear un perfil nuevo con correo, contraseña, nombre y apodo (nick).
+- ✅ Crear un perfil nuevo con correo, contraseña y apodo (nick).
 - ✅ Consultar un perfil por su identificador único.
 - ✅ Actualizar todos los datos de un perfil existente.
 - ✅ Eliminar un perfil del sistema.

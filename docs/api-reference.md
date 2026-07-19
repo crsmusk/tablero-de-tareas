@@ -50,7 +50,6 @@ Todas las respuestas de error siguen la estructura [`ErrorDtoSalida`](error-hand
 {
   "correo": "usuario@email.com",
   "contraseña": "password123",
-  "nombre": "Juan Pérez",
   "nickName": "juanp"
 }
 ```

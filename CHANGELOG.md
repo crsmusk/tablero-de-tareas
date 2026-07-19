@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+### Features & Refactoring
+* **perfil:** eliminación completa del campo `nombre` en `PerfilEntity`, DTOs, mappers y endpoints; consolidación del identificador de usuario bajo el campo único `nickName`.
+* **docs:** sincronización integral de la especificación técnica, arquitectura, API reference y modelo de base de datos para reflejar la eliminación del campo `nombre`.
+
 ## [1.1.0](https://github.com/crsmusk/tablero-de-tareas/compare/v1.0.0...v1.1.0) (2026-04-04)
 
 
