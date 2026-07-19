@@ -63,7 +63,6 @@ erDiagram
         UUID id PK
         String correo
         String contrasena
-        String nombre
         String nickName
     }
 

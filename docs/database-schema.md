@@ -24,7 +24,6 @@ erDiagram
         UUID id PK
         VARCHAR correo
         VARCHAR contrasena
-        VARCHAR nombre
         VARCHAR nick_name
     }
 
@@ -61,7 +60,6 @@ erDiagram
 | `id` | `UUID` | `id` | PK |
 | `correo` | `String` | `correo` | Unique, Not Blank |
 | `contraseña` | `String` | `contraseña` | Not Blank (Bcrypt) |
-| `nombre` | `String` | `nombre` | - |
 | `nickName` | `String` | `nick_name` | - |
 | `roles` | `Set<RolEntity>` | - | `@ManyToMany` |
 | `proyectos` | `List<ProyectoEntity>` | - | `@OneToMany` |
