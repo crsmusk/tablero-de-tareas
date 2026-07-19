@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/crsmusk/tablero-de-tareas/compare/v1.2.0...v1.2.1) (2026-07-19)
+
+
+### Documentation
+
+* sincronizar especificaciones y diagramas tras eliminar campo nombre ([445f46e](https://github.com/crsmusk/tablero-de-tareas/commit/445f46e212069a037f929a640ec17dbd680ce84f))
+
 ## [Unreleased]
 ### Features & Refactoring
 * **perfil:** eliminación completa del campo `nombre` en `PerfilEntity`, DTOs, mappers y endpoints; consolidación del identificador de usuario bajo el campo único `nickName`.
