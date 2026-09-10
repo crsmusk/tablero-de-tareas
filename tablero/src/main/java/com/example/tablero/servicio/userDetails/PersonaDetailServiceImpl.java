@@ -26,7 +26,7 @@ public class PersonaDetailServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String correo) throws UsernameNotFoundException {
         PerfilEntity perfil = perfilRepositorio.findByCorreo(correo)
                 .orElseThrow(() -> new UsernameNotFoundException(
-                        "Acceso denegado. No se encontró cuenta con el correo: " + correo));
+                        "Acceso denegado. Credenciales inválidas."));
 
         return User.builder()
                 .username(perfil.getCorreo())
