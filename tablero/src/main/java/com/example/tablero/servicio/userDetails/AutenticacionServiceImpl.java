@@ -35,7 +35,8 @@ public class AutenticacionServiceImpl implements AutenticacionI {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
         PerfilEntity perfil = perfilRepositorio.findByCorreo(userDetails.getUsername())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado tras autenticación"));
+                .orElseThrow(() -> new com.example.tablero.excepciones.excepcion.TableroExcepcion(
+                        "Usuario no encontrado tras autenticación", org.springframework.http.HttpStatus.UNAUTHORIZED));
 
         String token = jwtUtiles.generarToken(userDetails, perfil.getId());
 
