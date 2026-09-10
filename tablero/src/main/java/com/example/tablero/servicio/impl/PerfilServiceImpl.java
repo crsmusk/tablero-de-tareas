@@ -73,7 +73,7 @@ public class PerfilServiceImpl implements PerfilI {
             perfil.setNombre(perfilDto.getNombre());
         }
         if (perfilDto.getContraseña() != null && !perfilDto.getContraseña().isEmpty()) {
-            perfil.setContraseña(perfilDto.getContraseña());
+            perfil.setContraseña(passwordEncoder.encode(perfilDto.getContraseña()));
         }
         if (perfilDto.getNickName() != null && !perfilDto.getNickName().isEmpty()) {
             perfil.setNickName(perfilDto.getNickName());

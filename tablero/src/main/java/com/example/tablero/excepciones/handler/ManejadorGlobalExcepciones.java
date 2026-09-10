@@ -56,6 +56,19 @@ public class ManejadorGlobalExcepciones {
         return new ResponseEntity<>(errorDefecto, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(org.springframework.security.core.AuthenticationException.class)
+    public ResponseEntity<ErrorDtoSalida> manejarExcepcionesAutenticacion(Exception ex, WebRequest request) {
+        log.warn("Intento de autenticación fallido: {}", ex.getMessage());
+
+        ErrorDtoSalida errorDefecto = ErrorDtoSalida.builder()
+                .timestamp(LocalDateTime.now())
+                .estado(HttpStatus.UNAUTHORIZED.value())
+                .mensaje("Credenciales inválidas.")
+                .detalles(request.getDescription(false))
+                .build();
+        return new ResponseEntity<>(errorDefecto, HttpStatus.UNAUTHORIZED);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorDtoSalida> manejarExcepcionesGlobales(Exception ex, WebRequest request) {
         log.error("Excepción interna no controlada capturada por el manejador global: ", ex);

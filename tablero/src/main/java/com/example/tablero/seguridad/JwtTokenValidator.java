@@ -68,7 +68,7 @@ public class JwtTokenValidator extends OncePerRequestFilter {
 
                         UserDetails clienteDetails = org.springframework.security.core.userdetails.User.builder()
                                 .username(recursoSujetoId)
-                                .password("")
+                                .password("{bcrypt}$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HCGKKGk11XkRz5bW8HGLi") // Hash BCrypt de 'CLIENT_TOKEN_NO_PASSWORD'
                                 .authorities(restriccionCliente)
                                 .build();
 
