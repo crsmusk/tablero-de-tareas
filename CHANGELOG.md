@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.0](https://github.com/crsmusk/tablero-de-tareas/compare/v1.2.1...v1.3.0) (2026-09-10)
+
+
+### Features
+
+* implement Spring Security with JWT authentication and custom UserDetailsService support ([b641eaf](https://github.com/crsmusk/tablero-de-tareas/commit/b641eaff1fe996b46c1b7431b50c816f67ad830a))
+* implementar manejo personalizado de excepciones de login ([71627ad](https://github.com/crsmusk/tablero-de-tareas/commit/71627ad30d0304119584d7e541d97e3b2f82037d))
+
 ## [1.2.1](https://github.com/crsmusk/tablero-de-tareas/compare/v1.2.0...v1.2.1) (2026-07-19)
 
 
